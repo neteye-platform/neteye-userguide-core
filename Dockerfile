@@ -105,4 +105,6 @@ COPY --from=ug_builder --chown=nginx:nginx --chmod=644 $UG_HOME/versions.json  /
 RUN chmod 755 /usr/share/nginx/html/archived
 COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=755 /usr/share/nginx/all /usr/share/nginx/all
 
+USER nginx
+
 EXPOSE 8080
