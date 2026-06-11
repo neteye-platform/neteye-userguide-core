@@ -1,0 +1,530 @@
+{% extends "layout-home.html" %}
+{% set css_files = css_files + ['_static/neteye-home.css'] %}
+{% set title = _('NetEye User Guide') %}
+
+{% block htmltitle %}
+{{ super() }}
+{% endblock %}
+
+{% block document %}
+<div class="home cds--grid cds--grid--wider-max cds--grid--left">
+    <div class="cds--row index-section index-section--title-and-search">
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8 title-and-search-container">
+            <cds-heading>
+                Welcome to the NetEye product documentation
+            </cds-heading>
+            <p>
+                Explore NetEye Guide to find steps and build your solution for
+                unified monitoring of your network and infrastructure
+            </p>
+            <div id="index-search-container" class="search-container">
+                {%- include "searchbox.html" %}
+            </div>
+        </div>
+        <div id="home-menu" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8 entry-point">
+            <div class="home-menu">
+                <div class="header">
+                    <div>
+                        <span>Part of</span>
+                        <a href="https://www.wuerth-it.it/"
+                           target="_blank">
+                            Würth IT Italy
+                            &nbsp;
+                            <img alt="icon"
+                                 src="{{ pathto('_static/icons/launch.svg', 1)|e }}"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="list">
+                    <cds-stack gap="3">
+                        <a class="section-link hover-effect"
+                           href="#index-section--getting-started">
+                            <span>↳</span>
+                            <span>Getting Started</span>
+                        </a>
+                        <a class="section-link hover-effect"
+                           href="#index-section--modules--core-modules">
+                            <span>↳</span>
+                            <span>Core Modules</span>
+                        </a>
+                        <a class="section-link hover-effect"
+                           href="#index-section--modules--additional-modules">
+                            <span>↳</span>
+                            <span>Feature Modules</span>
+                        </a>
+                        <a class="section-link hover-effect"
+                           href="#index-section--references">
+                            <span>↳</span>
+                            <span>References</span>
+                        </a>
+                    </cds-stack>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cds--row index-section index-section--functional-overview">
+        <div class="cds--col remove-padding-end">
+            <cds-section level="2">
+                <cds-heading>Functional Overview</cds-heading>
+                <p>
+                    Learn about the full spectrum of services to
+                    construct your monitoring solution with
+                    NetEye
+                </p>
+                <cds-section level="4" class="cds--grid">
+                    <div class="cds--row cds--row--narrow">
+                        {% if toc_data %}
+                        {% macro render_functional_overview(items) %}
+                        {% if items[0].children %}
+                        {% set functional_overview = items[0].children[0] %}
+                        {# Excluding "Introduction to NetEye" #}
+                        {% for child in functional_overview.children %}
+                        <div class="tile-container cds--col-padding cds--col-sm-4 cds--col-md-4 cds--col-lg-4">
+                            <cds-clickable-tile href="{{ child.href }}"
+                                                class="tile">
+                                {% set functional_overview_key =
+                                child.href.split('/')[-1].replace('.html', '')
+                                %}
+                                {% set functional_overview_data =
+                                icons["functional-overview"].get(functional_overview_key)
+                                %}
+                                {% if functional_overview_data %}
+                                <img alt="icon {{functional_overview_data.name}}"
+                                     slot="icon"
+                                     src="{{ pathto(functional_overview_data.icon, 1)|e }}"/>
+                                {% else %}
+                                <img alt="placeholder icon" slot="icon"
+                                     src="{{ pathto('_static/icons/test.svg', 1)|e }}"/>
+                                {% endif %}
+                                <cds-heading>
+                                    {{functional_overview_data.name}}
+                                </cds-heading>
+                                <p>
+                                    {{functional_overview_data.abstract}}
+                                </p>
+                            </cds-clickable-tile>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endmacro %}
+
+                        {% if toc_data is string %}
+                        {% set toc_data_dict = toc_data|tojson|fromjson %}
+                        {% if toc_data_dict.children %}
+                        {{ render_functional_overview(toc_data_dict.children) }}
+                        {% endif %}
+                        {% else %}
+                        {{ render_functional_overview(toc_data) }}
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </cds-section>
+            </cds-section>
+        </div>
+    </div>
+
+    <!-- TODO: Temporary section until new design for NetEye Cloud section in the homepage-->
+    {% if toc_data and toc_data[3] and toc_data[3].title|lower == "neteye cloud" %}
+    <div class="cds--row index-section index-section--banner index-section--references">
+        <div id="index-section--references" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8">
+            <cds-section level="2">
+                <cds-heading>NetEye Cloud</cds-heading>
+                <p class="block-spaced">
+                    Explore our fully-managed cloud-based solution
+                    for unified monitoring of your network and infrastructure.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8 link-list">
+            <cds-stack gap="5">
+                {% if toc_data %}
+                    {% macro render_ne_cloud(items) %}
+                    {% set item = items[3] %}
+                    {% if item.children %}
+                        {% set children = item.children %}
+                        {% for child in children %}
+                            {% set href = child.href %}
+                            {% set valid_level1_children = [] %}
+                            {% for child1 in child.children %}
+                                {% if '#' not in child1.href %}
+                                    {% set _ = valid_level1_children.append(child1) %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if valid_level1_children %}
+                                {% set href = valid_level1_children[0].href %}
+                            {% endif %}
+                            <a class="hover-effect" href="{{ href }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32"
+                                    height="32" viewBox="0 0 32 32" fill="none">
+                                    <g clip-path="url(#clip0_3727_2396)">
+                                        <path d="M10.3432 7.51469L10.317 9.51085L21.0558 9.52994L6.80763 23.7781L8.22184 25.1924L22.47 10.9442L22.4651 21.6589L24.4853 21.6568V7.51469H10.3432Z"
+                                            fill="currentColor"/>
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_3727_2396">
+                                            <rect width="32" height="32" fill="none"/>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                                <span>{{ child.title }}</span>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                    {% endmacro %}
+
+                    {% if toc_data is string %}
+                        {% set toc_data_dict = toc_data|tojson|fromjson %}
+                        {% if toc_data_dict.children %}
+                            {{ render_ne_cloud(toc_data_dict.children) }}
+                        {% endif %}
+                    {% else %}
+                        {{ render_ne_cloud(toc_data) }}
+                    {% endif %}
+                {% endif %}
+            </cds-stack>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="cds--row index-section index-section--banner index-section--getting-started cds-theme-zone-g100">
+        <div id="index-section--getting-started" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8">
+            <cds-section level="2">
+                <cds-heading>Getting Started</cds-heading>
+                <p>
+                    Learn about the basics of NetEye products and configuration.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8 link-list">
+            <cds-stack gap="5">
+                {% if toc_data %}
+                {% macro render_getting_started(items) %}
+                {% set item = items[0] %}
+                {% if item.children %}
+                {# Excluding "Functional Overview" #}
+                {% set children = item.children[1:] %}
+                {% for child in children %}
+                {% set href = child.href %}
+                {% set valid_level1_children = [] %}
+                {% for child1 in child.children %}
+                {% if '#' not in child1.href %}
+                {% set _ = valid_level1_children.append(child1) %}
+                {% endif %}
+                {% endfor %}
+
+                {% if valid_level1_children %}
+                {% set href = valid_level1_children[0].href %}
+                {% endif %}
+
+                <a class="hover-effect" href="{{ href }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32"
+                         height="32" viewBox="0 0 32 32" fill="none">
+                        <g clip-path="url(#clip0_3727_2396)">
+                            <path d="M10.3432 7.51469L10.317 9.51085L21.0558 9.52994L6.80763 23.7781L8.22184 25.1924L22.47 10.9442L22.4651 21.6589L24.4853 21.6568V7.51469H10.3432Z"
+                                  fill="currentColor"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_3727_2396">
+                                <rect width="32" height="32" fill="none"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <span>{{ child.title }}</span>
+                </a>
+
+                {% endfor %}
+                {% endif %}
+                {% endmacro %}
+
+                {% if toc_data is string %}
+                {% set toc_data_dict = toc_data|tojson|fromjson %}
+                {% if toc_data_dict.children %}
+                {{ render_getting_started(toc_data_dict.children) }}
+                {% endif %}
+                {% else %}
+                {{ render_getting_started(toc_data) }}
+                {% endif %}
+                {% endif %}
+            </cds-stack>
+        </div>
+    </div>
+
+    <div class="cds--row index-section">
+        <div class="cds--col">
+            <hr/>
+        </div>
+    </div>
+
+    <div class="cds--row index-section index-section--modules">
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-16 section-title">
+            <cds-section level="2">
+                <cds-heading>Modules</cds-heading>
+            </cds-section>
+        </div>
+        <div id="index-section--modules--core-modules" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-4 side-text">
+            <cds-section level="3">
+                <cds-heading>Core</cds-heading>
+                <p class="section-description">
+                    Modules that are shipped with the standard NetEye image
+                    build NetEye Core.
+                    NetEye Core is a set of Modules shipped with the standard
+                    NetEye image build.<br><br>
+                    It presents most commonly used functionalities offered by
+                    the platform, including monitoring, visualization,
+                    configuration, reporting, and event handling.<br><br>
+                    All other Feature Modules can be installed on demand.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-12 blocks realign-lg">
+            <cds-section level="4" class="cds--grid cds--grid--condensed">
+                <div class="cds--row no-margins">
+                    {% if toc_data %}
+                    {% macro render_modules(items) %}
+                    {% if items[1].children %}
+                    {% set modules = items[1] %}
+                    {% for child in modules.children %}
+                    {% set href = child.href %}
+                    {% if child.children %}
+                    {% set href = child.children[0].href %}
+                    {% endif %}
+                    {# Core Modules section #}
+                    <div class="tile-container cds--col-sm-4 cds--col-md-4 cds--col-lg-5.3">
+                        <cds-clickable-tile href="{{ href }}"
+                                            class="tile">
+                            {% set module_key =
+                            child.href.split('/')[-1].replace('.html', '') %}
+                            {% set module_data =
+                            icons["core-modules"].get(module_key) %}
+                            {% if module_data %}
+                            <img alt="icon {{module_data.name}}" slot="icon"
+                                 src="{{ pathto(module_data.icon, 1)|e }}"/>
+                            {% else %}
+                            <img alt="placeholder icon" slot="icon"
+                                 src="{{ pathto('_static/icons/test.svg', 1)|e }}"/>
+                            {% endif %}
+                            <cds-heading>
+                                {{ module_data.name }}
+                            </cds-heading>
+                            <p>
+                                {{module_data.abstract}}
+                            </p>
+                        </cds-clickable-tile>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endmacro %}
+
+                    {% if toc_data is string %}
+                    {% set toc_data_dict = toc_data|tojson|fromjson %}
+                    {% if toc_data_dict.children %}
+                    {{ render_modules(toc_data_dict.children) }}
+                    {% endif %}
+                    {% else %}
+                    {{ render_modules(toc_data) }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </cds-section>
+        </div>
+    </div>
+
+    <div class="cds--row index-section index-section--modules index-section--modules--additional-modules">
+        <div id="index-section--modules--additional-modules" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-4 side-text">
+            <cds-section level="3">
+                <cds-heading>Feature</cds-heading>
+                <p class="section-description">
+                    Additional Feature Modules can be installed on demand to
+                    enhance your monitoring experience with NetEye.<br><br>
+                    The NetEye modular architecture supports the installation of
+                    additional Modules that extend the NetEye Core
+                    functionalities. This separation allows to customize NetEye
+                    in order to address specific customer needs.<br><br>
+                    Feature Modules are to be installed on demand.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-12 realign-lg">
+            <cds-section level="4" class="cds--grid cds--grid--condensed">
+                <div class="cds--row no-margins">
+                    {% if toc_data %}
+                    {% macro render_feature_modules(items) %}
+                    {% if items[0].children %}
+                    {% set feature_modules = items[2] %}
+                    {% for child in feature_modules.children %}
+                    {% set href = child.href %}
+                    {% if child.children %}
+                    {% set href = child.children[0].href %}
+                    {% endif %}
+                    {# Feature ("additional") modules section #}
+                    <div class="tile-container cds--col-sm-4 cds--col-md-4 cds--col-lg-5.3">
+                        <cds-clickable-tile href="{{ href }}"
+                                            class="tile">
+                            {% set module_key =
+                            child.href.split('/')[-1].replace('.html', '') %}
+                            {% set module_data =
+                            icons["feature-modules"].get(module_key) %}
+                            {% if module_data %}
+                            <img alt="icon {{module_data.name}}" slot="icon"
+                                 src="{{ pathto(module_data.icon, 1)|e }}"/>
+                            {% else %}
+                            <img alt="placeholder icon" slot="icon"
+                                 src="{{ pathto('_static/icons/test.svg', 1)|e }}"/>
+                            {% endif %}
+                            <cds-heading>
+                                {{ module_data.name }}
+                            </cds-heading>
+                            <p>
+                                {{module_data.abstract}}
+                            </p>
+                        </cds-clickable-tile>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endmacro %}
+
+                    {% if toc_data is string %}
+                    {% set toc_data_dict = toc_data|tojson|fromjson %}
+                    {% if toc_data_dict.children %}
+                    {{ render_feature_modules(toc_data_dict.children) }}
+                    {% endif %}
+                    {% else %}
+                    {{ render_feature_modules(toc_data) }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </cds-section>
+        </div>
+    </div>
+
+    {#
+    <div class="cds--row index-section index-section--banner index-section--other-products cds-theme-zone-g100">
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8">
+            <cds-section level="2">
+                <cds-heading>Other products</cds-heading>
+                <p>
+                    Learn about the basics of NetEye products and configuration.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-6 cds--col-xlg-4 link-list">
+            <cds-section level="3">
+                <cds-heading>Cyber Threat Intelligence</cds-heading>
+                <p class="paragraph--smaller block-spaced">
+                    Cutting-edge OSINT and threat intelligence platform,
+                    meticulously developed and continuously updated by our
+                    expert cybersecurity team.<br><br>
+                    SATAYO offers comprehensive monitoring of your
+                    organization’s exposure and anticipates the movements of
+                    cybercriminals.<br><br>
+                    The platform scans publicly accessible sources across the
+                    Surface, Deep, and Dark Web for evidence linked to your
+                    organization.
+                    Additionally, it simulates the tactics employed by cyber
+                    attackers during the initial phase of an attack.
+                </p>
+                <cds-stack gap="4">
+                    <a class="hover-effect" href="{{ pathto('index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32"
+                             height="32" viewBox="0 0 32 32" fill="none">
+                            <g clip-path="url(#clip0_3727_2396)">
+                                <path d="M10.3432 7.51469L10.317 9.51085L21.0558 9.52994L6.80763 23.7781L8.22184 25.1924L22.47 10.9442L22.4651 21.6589L24.4853 21.6568V7.51469H10.3432Z"
+                                      fill="currentColor"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_3727_2396">
+                                    <rect width="32" height="32" fill="none"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                        <span>Documentation</span>
+                    </a>
+                    <a class="hover-effect" target="_blank"
+                       href="https://www.wuerth-it.it/en/product/cyber-security-threat-intelligence/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32"
+                             height="32" viewBox="0 0 32 32" fill="none">
+                            <g clip-path="url(#clip0_3727_2396)">
+                                <path d="M10.3432 7.51469L10.317 9.51085L21.0558 9.52994L6.80763 23.7781L8.22184 25.1924L22.47 10.9442L22.4651 21.6589L24.4853 21.6568V7.51469H10.3432Z"
+                                      fill="currentColor"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_3727_2396">
+                                    <rect width="32" height="32" fill="none"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                        <span>Demo</span>
+                    </a>
+                </cds-stack>
+            </cds-section>
+        </div>
+    </div>
+    #}
+
+    <div class="cds--row index-section index-section--banner index-section--references">
+        <div id="index-section--references" class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8">
+            <cds-section level="2">
+                <cds-heading>References</cds-heading>
+                <p class="block-spaced">
+                    Some essential resources that will help with solution for
+                    common problems.
+                </p>
+            </cds-section>
+        </div>
+        <div class="cds--col-sm-4 cds--col-md-8 cds--col-lg-8 link-list">
+            <cds-stack gap="5">
+                {% if toc_data %}
+                {% macro render_getting_started(items) %}
+                {% set item = items[items|length - 1] %}
+                {% if item.children %}
+                {% set children = item.children %}
+                {% for child in children %}
+                {% set href = child.href %}
+                {% set valid_level1_children = [] %}
+                {% for child1 in child.children %}
+                {% if '#' not in child1.href %}
+                {% set _ = valid_level1_children.append(child1) %}
+                {% endif %}
+                {% endfor %}
+
+                {% if valid_level1_children %}
+                {% set href = valid_level1_children[0].href %}
+                {% endif %}
+
+                <a class="hover-effect" href="{{ href }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32"
+                         height="32" viewBox="0 0 32 32" fill="none">
+                        <g clip-path="url(#clip0_3727_2396)">
+                            <path d="M10.3432 7.51469L10.317 9.51085L21.0558 9.52994L6.80763 23.7781L8.22184 25.1924L22.47 10.9442L22.4651 21.6589L24.4853 21.6568V7.51469H10.3432Z"
+                                  fill="currentColor"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_3727_2396">
+                                <rect width="32" height="32" fill="none"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <span>{{ child.title }}</span>
+                </a>
+
+                {% endfor %}
+                {% endif %}
+                {% endmacro %}
+
+                {% if toc_data is string %}
+                    {% set toc_data_dict = toc_data|tojson|fromjson %}
+                    {% if toc_data_dict.children %}
+                        {{ render_getting_started(toc_data_dict.children) }}
+                    {% endif %}
+                    {% else %}
+                        {{ render_getting_started(toc_data) }}
+                    {% endif %}
+                {% endif %}
+            </cds-stack>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block rxColumn %}{% endblock %}

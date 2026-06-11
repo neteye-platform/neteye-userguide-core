@@ -1,0 +1,13 @@
+<div class="linked_modules">
+    <h1> Modules in {{ title|striptags|e }} </h1>
+    <div>
+        {% for module in linked_modules %}
+            <cds-clickable-tile href="{{ module['built-sphinx-link'] | e }}">
+                <h4> {{ module['name'] }} </h4>
+                <p> {{ module['abstract'] }} </p>
+                <img alt="icon {{ module['name'] }}" slot="icon"
+                     src="{{ pathto(module['icon'], 1)|e }}"/>
+            </cds-clickable-tile>
+        {% endfor %}
+    </div>
+</div>

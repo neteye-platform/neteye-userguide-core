@@ -1,0 +1,50 @@
+.not-found-content {
+    margin-top: 32px;
+    margin-left: 17px;
+}
+
+.not-found-image {
+    mask: url("./icons/care.svg") no-repeat left;
+    -webkit-mask: url("./icons/care.svg") no-repeat left;
+    background-color: #8D8D8D;
+    min-width: 96px;
+    min-height: 96px;
+}
+
+.not-found-title {
+    margin-top: 16px;
+    font-weight: 300 !important;
+    font-size: 67px;
+    line-height: 87px;
+    color: #161616;
+}
+
+.not-found-description {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 22px;
+    max-width: 300px;
+    font-weight: 400;
+    color: #161616;
+    margin-bottom: 32px;
+}
+
+.not-found-description a {
+    color: unset !important;
+    text-decoration: underline;
+}
+
+#document {
+    min-height: calc(100vh - 361px) !important;
+}
+
+#content {
+    margin-top: 48px !important;
+}
+
+@media (max-width: 768px) {
+    .not-found-title {
+        font-size: 54px;
+        line-height: 70px;
+    }
+}

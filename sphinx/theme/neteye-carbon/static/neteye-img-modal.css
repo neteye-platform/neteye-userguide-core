@@ -1,0 +1,96 @@
+body.modal-open {
+    overflow: visible !important;
+    padding-right: 0 !important;
+}
+
+div.modal.figure-zoom {
+    padding: 0 !important;
+    z-index: 9000;
+    opacity: 0 !important;
+    transition: opacity .24s cubic-bezier(.4,.14,1,1);
+    display: block !important;
+    background-color: rgba(22, 22, 22, 0.5) !important;
+}
+
+div.modal.figure-zoom.show {
+    transition: opacity .24s cubic-bezier(0,0,.3,1) !important;
+    opacity: 1 !important;
+}
+
+div.modal.figure-zoom .modal-dialog {
+    transform: translate3d(0,-24px,0) !important;
+    transition: transform .24s cubic-bezier(.4,.14,1,1);
+}
+
+div.modal.figure-zoom.show .modal-dialog {
+    transition: transform .24s cubic-bezier(0,0,.3,1) !important;
+    transform: translateZ(0) !important;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+div.modal.figure-zoom .modal-dialog {
+    max-width: unset;
+    max-height: unset;
+    width: max-content;
+    height: max-content;
+}
+
+div.modal.figure-zoom .modal-content {
+    border-radius: 0;
+    border: 0;
+}
+
+div.modal.figure-zoom .modal-body {
+    padding: 0 16px;
+}
+
+div.modal.figure-zoom .modal-body img {
+    max-width: 72vw;
+    max-height: calc(96vh - 96px);
+}
+
+div.modal.figure-zoom .modal-header,
+div.modal.figure-zoom .modal-footer {
+    border: none;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.8px;
+    justify-content: flex-start;
+    padding: 0 16px;
+}
+
+div.modal.figure-zoom .modal-footer {
+    padding: 8px 16px 16px 16px;
+}
+
+div.modal.figure-zoom .modal-footer a {
+    display: none;
+}
+
+div.modal.figure-zoom .modal-header {
+    height: 48px;
+}
+
+div.modal.figure-zoom .modal-header button {
+    margin-top: 0;
+    opacity: unset;
+    z-index: 99999;
+    padding: 12px;
+    border: 2px solid transparent;
+    height: 48px;
+    width: 48px;
+    background-image: url("./icons/close-dark.svg");
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    outline: unset !important;
+}
+
+div.modal.figure-zoom .modal-header button:hover {
+    opacity: unset;
+    background-color: #e5e5e5;
+}

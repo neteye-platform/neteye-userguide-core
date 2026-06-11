@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% set css_files = css_files + ['_static/neteye-404.css'] %}
+{% set title = '404 Not Found' %}
+
+{%- block content %}
+
+<div class="document cds--grid cds--grid--full-width cds--no-gutter">
+    {%- block document %}
+    <div class="cds--row">
+        <div class="cds--col content content--archived">
+            <div class="body body--no-margin-left" role="main">
+                <cds-section level="1">
+                    <cds-heading>404 - Page not found</cds-heading>
+                    <p>
+                        The page you're looking for may have been moved, deleted or does not
+                        exist for the current version you selected.
+                    </p>
+                </cds-section>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block rxColumn %}{% endblock %}

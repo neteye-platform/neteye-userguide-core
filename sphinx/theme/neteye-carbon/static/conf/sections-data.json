@@ -1,0 +1,259 @@
+{
+  "sections": {
+    "intended-use": {
+      "icon": "_static/icons/new-structure/intended-use.svg"
+    },
+    "getting-started-new-guide": {
+      "icon": "_static/icons/new-structure/getting-started.svg"
+    },
+    "core-modules": {
+      "icon": "_static/icons/new-structure/core-modules.svg"
+    },
+    "feature-modules": {
+      "icon": "_static/icons/new-structure/feature-modules.svg"
+    },
+    "references": {
+      "icon": "_static/icons/new-structure/references.svg"
+    },
+    "nep": {
+      "icon": "_static/icons/new-structure/nep.svg"
+    },
+    "doc": {
+      "icon": "_static/icons/new-structure/nep.svg"
+    },
+    "troubleshooting": {
+      "icon": "_static/icons/new-structure/troubleshooting.svg"
+    },
+    "security-policy": {
+      "icon": "_static/icons/new-structure/security-policy.svg"
+    },
+    "glossary": {
+      "icon": "_static/icons/new-structure/glossary.svg"
+    },
+    "functional-overview": {
+      "icon": "_static/icons/new-structure/functional-overview.svg"
+    },
+    "requirements": {
+      "icon": "_static/icons/new-structure/requirements.svg"
+    },
+    "architecture": {
+      "icon": "_static/icons/new-structure/architecture.svg"
+    },
+    "system-installation": {
+      "icon": "_static/icons/new-structure/system-installation.svg"
+    },
+    "additional-components": {
+      "icon": "_static/icons/new-structure/neteye-additional-component-installation.svg"
+    },
+    "setup": {
+      "icon": "_static/icons/new-structure/setup.svg"
+    },
+    "neteye-command": {
+      "icon": "_static/icons/new-structure/neteye-command.svg"
+    },
+    "update-upgrade": {
+      "icon": "_static/icons/new-structure/neteye-update-and-upgrade.svg"
+    },
+    "backup-restore": {
+      "icon": "_static/icons/new-structure/backup-restore.svg"
+    },
+    "how-to": {
+      "icon": "_static/icons/new-structure/how-to.svg"
+    },
+    "neteye-cloud": {
+      "icon": "_static/icons/new-structure/cloud.svg"
+    }
+  },
+  "functional-overview": {
+    "introduction": {
+      "icon": "_static/icons/new-structure/intended-use.svg",
+      "name": "Introduction to NetEye",
+      "abstract": "Build your solution for unified monitoring of your infrastructure"
+    },
+    "monitoring-intended-use": {
+      "icon": "_static/icons/new-structure/monitoring.svg",
+      "name": "Monitoring",
+      "abstract": "Keep under control your company's infrastructure on multiple levels",
+      "linked-modules": ["core-modules.tornado", "core-modules.director"]
+    },
+    "visualization": {
+      "icon": "_static/icons/new-structure/visualization.svg",
+      "name": "Visualization",
+      "abstract": "View the status of your infrastructure in real-time",
+      "linked-modules": [
+        "core-modules.director",
+        "core-modules.geo-maps",
+        "core-modules.nagvis"
+      ]
+    },
+    "network-visibility": {
+      "icon": "_static/icons/new-structure/network-visibility.svg",
+      "name": "Network Visibility",
+      "abstract": "Traffic Analysis and Flow Collection",
+      "linked-modules": ["feature-modules.ntopng"]
+    },
+    "business-service-monitoring": {
+      "icon": "_static/icons/new-structure/business-service-monitoring.svg",
+      "name": "Business Service Monitoring",
+      "abstract": "Observability of your business services depending on the state of every single part of your infrastructure",
+      "linked-modules": ["core-modules.business-service-monitoring"]
+    },
+    "itoa": {
+      "icon": "_static/icons/new-structure/itoa.svg",
+      "name": "IT Operations Analytics",
+      "abstract": "View collected performance data integrated into a time series database for data analytics",
+      "linked-modules": ["core-modules.itoa"]
+    },
+    "log-management-and-security": {
+      "icon": "_static/icons/new-structure/log-management-and-security.svg",
+      "name": "Log Management and Security",
+      "abstract": "Collect and process logs to detect anomalies and threats",
+      "linked-modules": [
+        "core-modules.auditlog",
+        "feature-modules.elastic-stack"
+      ]
+    },
+    "shutdown-manager": {
+      "icon": "_static/icons/new-structure/shutdown-manager.svg",
+      "name": "Shutdown Manager",
+      "abstract": "Controlled shutdown of a large number of hosts in case of emergency",
+      "linked-modules": ["core-modules.shutdown-manager"]
+    },
+    "apm": {
+      "icon": "_static/icons/new-structure/apm.svg",
+      "name": "Application Performance Monitoring",
+      "abstract": "Collect data about the performance of applications and monitor them in real-time",
+      "linked-modules": ["feature-modules.elastic-stack"]
+    },
+    "user-experience": {
+      "icon": "_static/icons/new-structure/user-experience.svg",
+      "name": "User Experience",
+      "abstract": "Monitor real user data to optimize web performance and enhance user experience",
+      "linked-modules": [
+        "feature-modules.elastic-stack",
+        "feature-modules.alyvix"
+      ]
+    },
+    "service-management": {
+      "icon": "_static/icons/new-structure/service-management.svg",
+      "name": "Service Management",
+      "abstract": "Manage the IT assets and services of the infrastructure, including Enterprise level",
+      "linked-modules": [
+        "feature-modules.command-orchestrator",
+        "feature-modules.asset-management"
+      ]
+    },
+    "slm-and-reporting": {
+      "icon": "_static/icons/new-structure/slm-and-reporting.svg",
+      "name": "Service Level Management and Reporting",
+      "abstract": "Create availability reports over a specified timeperiod and schedule their generation",
+      "linked-modules": ["core-modules.reporting", "feature-modules.slm"]
+    }
+  },
+  "core-modules": {
+    "introduction": {
+      "icon": "_static/icons/new-structure/module-introduction.svg",
+      "name": "Introduction to Core Modules",
+      "abstract": "Modules that are shipped with the standard NetEye image build NetEye Core"
+    },
+    "director": {
+      "icon": "_static/icons/new-structure/module-director.svg",
+      "name": "Director",
+      "abstract": "A single place to configure your monitoring environment"
+    },
+    "tornado": {
+      "icon": "_static/icons/new-structure/module-tornado.svg",
+      "name": "Tornado",
+      "abstract": "Analyze data received from your devices, process and generate actions to be executed"
+    },
+    "neteye-self-monitoring": {
+      "icon": "_static/icons/new-structure/module-neteye-self-monitoring.svg",
+      "name": "Neteye Self Monitoring",
+      "abstract": "Run health checks to monitor the health of NetEye itself"
+    },
+    "business-service-monitoring": {
+      "icon": "_static/icons/new-structure/module-business-service-monitoring.svg",
+      "name": "Business Service Monitoring",
+      "abstract": "Manage your business services based on the state of every single part of your infrastructure"
+    },
+    "itoa": {
+      "icon": "_static/icons/new-structure/module-itoa.svg",
+      "name": "ITOA",
+      "abstract": "Collect and compute data from network interfaces, applications and systems to present the result in a visual form"
+    },
+    "geo-maps": {
+      "icon": "_static/icons/new-structure/module-nagvis.svg",
+      "name": "Geo Maps",
+      "abstract": "Keep track of your hosts and host groups on customizable maps"
+    },
+    "nagvis": {
+      "icon": "_static/icons/new-structure/module-nagvis.svg",
+      "name": "NagVis",
+      "abstract": "Interactive geographical maps to display the state of hosts and all their services"
+    },
+    "auditlog": {
+      "icon": "_static/icons/new-structure/module-audit-log.svg",
+      "name": "Audit Log",
+      "abstract": "Look back at changes that have been made to NetEye"
+    },
+    "shutdown-manager": {
+      "icon": "_static/icons/new-structure/module-shutdown-manager.svg",
+      "name": "Shutdown Manager",
+      "abstract": "Controlled shutdown of a large number of hosts in case of emergency"
+    },
+    "reporting": {
+      "icon": "_static/icons/new-structure/module-reporting.svg",
+      "name": "Reporting",
+      "abstract": "Create host and service availability reports based on the monitoring database"
+    }
+  },
+  "feature-modules": {
+    "ntopng": {
+      "icon": "_static/icons/new-structure/module-ntopng.svg",
+      "name": "Ntopng",
+      "abstract": "Inspect your network flows"
+    },
+    "alyvix": {
+      "icon": "_static/icons/new-structure/module-alyvix.svg",
+      "name": "Visual Monitoring with Alyvix",
+      "abstract": "Monitor your Alyvix nodes by scheduling test cases in sessions on different Alyvix machines"
+    },
+    "elastic-stack": {
+      "icon": "_static/icons/new-structure/module-elastic.svg",
+      "name": "Elastic Stack",
+      "abstract": "Retrieve, search, analyze, and visualize data from any source"
+    },
+    "command-orchestrator": {
+      "icon": "_static/icons/new-structure/module-command-orchestrator.svg",
+      "name": "IT Operations (Command Orchestrator)",
+      "abstract": "Execute predefined commands (also remotely) on hosts without having access to them"
+    },
+    "asset-management": {
+      "icon": "_static/icons/new-structure/module-assetmanagement.svg",
+      "name": "Asset Management",
+      "abstract": "Advanced feature for inventory, asset and mobile devices management"
+    },
+    "slm": {
+      "icon": "_static/icons/new-structure/module-slm.svg",
+      "name": "Service Level Management",
+      "abstract": "Setup contracts between an SLM customer and the service provider"
+    },
+    "satayo": {
+      "icon": "_static/icons/new-structure/satayo-icon.svg",
+      "name": "Cyber Threat Intelligence - SATAYO",
+      "abstract": "Scan your company for detecting vulnerabilities and potential risk of attacks"
+    }
+  },
+  "neteye-cloud": {
+    "strategy": {
+      "icon": "_static/icons/new-structure/cloud.svg",
+      "name": "NetEye.Cloud Strategy",
+      "abstract": "Cloud solution for unified monitoring of your network and infrastructure"
+    },
+    "cloud-monitoring": {
+      "icon": "_static/icons/new-structure/cloud.svg",
+      "name": "Monitoring Functional Area",
+      "abstract": "Cloud solution for unified monitoring of your network and infrastructure"
+    }
+  }
+}

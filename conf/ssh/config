@@ -1,0 +1,3 @@
+Host bitbucket.org
+  IdentityFile ~/.ssh/bitbucket
+  IdentitiesOnly yes
