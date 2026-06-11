@@ -1,0 +1,4 @@
+docutils
+sphinx
+sphinx-copybutton
+sphinxcontrib.jquery

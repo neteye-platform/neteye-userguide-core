@@ -1,0 +1,3 @@
+[submodule "sphinx/source"]
+	path = sphinx/source
+	url = git@github.com:neteye-platform/neteye-userguide-content.git
