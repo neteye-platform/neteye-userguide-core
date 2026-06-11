@@ -1,0 +1,11 @@
+.idea/
+RPMS/
+SRPMS/
+_build
+conf/ssh/keys/
+sphinx/build
+ug-dev-virtualenv/
+
+# Playwright
+src/t/playwright/test-results
+node_modules

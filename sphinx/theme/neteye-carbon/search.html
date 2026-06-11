@@ -1,0 +1,44 @@
+{%- extends "layout.html" %}
+{% set css_files = css_files + ['_static/search.css'] %}
+{% set title = _('Search:') %}
+
+{%- block scripts %}
+{{ super() }}
+<script src="{{ pathto('_static/searchtools.js', 1) }}"></script>
+<script src="{{ pathto('_static/language_data.js', 1) }}"></script>
+<script src="{{ pathto('_static/search.js', 1)|e }}"></script>
+{%- endblock %}
+{% block extrahead %}
+
+{{ super() }}
+{% endblock %}
+
+{%- block sidebar1 %}{% endblock %}
+
+{%- block document %}
+    <div id="content" class="cds--row">
+        <div class="cds--col">
+            <div id="banner" class="search-banner">
+                <p class="search-summary"></p>
+                <h1 class="banner-title">
+                    {{ title|striptags|e }} {{ search_results }}
+                    <span class="query"></span>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="cds--row" id="document">
+        <div class="cds--col content">
+            <div class="body" role="main">
+                <div id="search-results">
+                    <ul class="search" id="results"></ul>
+                </div>
+                {% if search_performed %}
+                    {% if not search_results %}
+                    <p>{{ _('Your search did not match any documents. Please make sure that all words are spelled correctly and that you\'ve selected enough categories.') }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

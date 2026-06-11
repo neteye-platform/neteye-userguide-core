@@ -1,0 +1,32 @@
+/** Search bar **/
+#searchform {
+    position: relative;
+    display: block;
+    background-color: var(--cds-field);
+}
+
+#searchform #search::part(search-icon) {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+#searchform #search::part(input) {
+    padding-inline-end: var(--cds-spacing-04);
+    /* Change padding-inline-end size if AI label is required */
+    /*padding-inline-end: var(--cds-spacing-09);*/
+    border-block-end: none;
+    height: calc(3rem - 1px);
+}
+
+#searchform #search::part(close-button) {
+    display: none;
+}
+
+#searchform .ai {
+    /* Remove display property if AI label is required */
+    display: none;
+    position: absolute;
+    right: var(--cds-spacing-04);
+    top: 50%;
+    transform: translateY(-50%);
+}

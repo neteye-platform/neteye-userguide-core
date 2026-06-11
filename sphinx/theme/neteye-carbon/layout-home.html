@@ -1,0 +1,121 @@
+{%- extends "basic/layout.html" %}
+{% macro breadcrumb() %}
+{% include "breadcrumb.html" %}
+{% endmacro %}
+
+{% block htmltitle %}
+<meta charset="utf-8"/>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+{{ super() }}
+{% endblock %}
+
+{%- block css %}
+<link rel="stylesheet"
+      href="{{pathto('_static/carbon/css/theme.css', 1)|e}}"
+      type="text/css"/>
+<link rel="stylesheet"
+      href="{{pathto('_static/carbon/css/grid.css', 1)|e}}"
+      type="text/css"/>
+<link rel="stylesheet" href="{{pathto('_static/carbon/css/plex.css', 1)|e}}"
+      type="text/css"/>
+{{ super() }}
+{%- endblock %}
+
+{%- block scripts %}
+<script src="{{pathto('_static/js.cookie.min.js', 1)|e}}"></script>
+<script src="{{pathto('_static/neteye.js', 1)|e}}"></script>
+<script>
+    function handleDarkThemeHtml() {
+        const darkThemeCookieName = "neteye-userguide-theme";
+        const useDarkTheme = (Cookies.get(darkThemeCookieName) === 'true');
+        if (useDarkTheme) {
+            document.querySelector('html')?.classList.add('dark-html');
+        }
+    }
+    handleDarkThemeHtml();
+</script>
+<script src="{{ pathto('_static/searchbox.js', 1)|e }}"></script>
+<!-- Carbon Web Components -->
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/modal.min.js"
+        integrity="sha384-IMc78Sv2POqOaa5EHGXk7+MOwansXhkMZDiC4HQi2oYdwryp8Mmzd1Eih/e8yImb"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/ai-label.min.js"
+        integrity="sha384-uozaSQtQLs5KTgDQBW2Gm3i7xL+eZuRsbTGJifmx7OkmPBIyWC+Cs1NWuv716TBb"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/breadcrumb.min.js"
+        integrity="sha384-8hEhOHRPpze23bz1azPD//SLBeEe3rb6cIjzezNCajq7/FdxECgI0ZJAWGPyew5M"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/heading.min.js"
+        integrity="sha384-cHHre7R+MeHqJyoZl+O1STKfWybyO9QyLUIqPnxp8GzbOxqIeGafnwbmkUX2r597"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/search.min.js"
+        integrity="sha384-TXSCqACWoTxuIldqdyUuftg0ohpBSLzUDMJiJk9zwTVuJ1BLeLn6rDhD4Tx/uBRv"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/stack.min.js"
+        integrity="sha384-kL7ai7+/yWBpUpULqmdW9WulTzLdG2E3YNif9dy0SRY0OHTlPKYOqv2o2HAn34O+"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/tile.min.js"
+        integrity="sha384-gmBmTB0LTNkfInN4eLWwtKcZkAF62iIzHXYdlusa88pWbXATs1UJgI1arAb/WVJQ"
+        crossorigin="anonymous">
+</script>
+<script type="module"
+        src="https://1.www.s81c.com/common/carbon/web-components/version/v2.37.0/ui-shell.min.js"
+        integrity="sha384-SSulglAuuraDF0fhRR2D0JjfMw9UFYxH1XuFFofLN9dQGLJA7s9pdEkvv7hq4ijl"
+        crossorigin="anonymous">
+</script>
+{{ super() }}
+{%- endblock %}
+
+{%- block body_tag %}
+<body data-spy="scroll" data-offset="56" data-target="#local-toc-nav" data-page="{{ pagename | e }}" class="cds-theme-zone-g10">
+{%- endblock %}
+
+{%- block html_header %}
+{%- include "html_header.html" %}
+{%- endblock %}
+
+{%- block header %}
+{%- include "topbar.html" %}
+{%- endblock %}
+
+{%- block relbar1 %}{% endblock %}
+
+{%- block content %}
+{%- block sidebar1 %}
+{%- for sidebartemplate in sidebars %}
+{%- include sidebartemplate %}
+{%- endfor %}
+{% endblock %}
+
+<div class="document">
+    {%- block document %}
+    {%- endblock %}
+</div>
+
+{%- block cookiebanner %}
+{%- include "cookiebanner.html" %}
+{%- endblock %}
+
+{%- block sidebar2 %}{% endblock %}
+{%- endblock %}
+
+{%- block relbar2 %}{% endblock %}
+
+{%- block footer %}
+{%- include "footer.html" %}
+{%- endblock %}
