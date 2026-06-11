@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chart--cluster-bar 1" clip-path="url(#clip0_3727_3726)">
+<path id="Vector" d="M30 30H4C3.46957 30 2.96086 29.7893 2.58579 29.4142C2.21071 29.0391 2 28.5304 2 28V2H4V28H30V30Z" fill="#161616"/>
+<path id="Vector_2" d="M12 16H10V26H12V16Z" fill="#161616"/>
+<path id="Vector_3" d="M9 22H7V26H9V22Z" fill="#161616"/>
+<path id="Vector_4" d="M28 8H26V26H28V8Z" fill="#161616"/>
+<path id="Vector_5" d="M25 14H23V26H25V14Z" fill="#161616"/>
+<path id="Vector_6" d="M15 26H17V12H15L15 26Z" fill="#161616"/>
+<path id="Vector_7" d="M18 26H20V18H18V26Z" fill="#161616"/>
+</g>
+<defs>
+<clipPath id="clip0_3727_3726">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

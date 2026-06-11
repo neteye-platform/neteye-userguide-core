@@ -1,0 +1,23 @@
+{
+  "NetEye SIEM": [
+    "/siem/concepts.html",
+    "/siem/configuration.html",
+    "/siem/advanced-topics.html",
+    "/troubleshooting/siem.html"
+  ],
+  "NetEye SLM": [
+    "/monitoring/slm.html",
+    "/howto/service-management.html",
+    "/troubleshooting/service-level-management.html"
+  ],
+  "NetEye CMD": [
+    "/service-management/IT-operations.html"
+  ],
+  "NetEye Asset": [
+    "/service-management/asset-management.html"
+  ],
+  "NetEye ntopng": [
+    "/monitoring/ntopng.html",
+    "/howto/itoa.html"
+  ]
+}

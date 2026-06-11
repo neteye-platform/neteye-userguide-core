@@ -1,0 +1,25 @@
+{#
+basic/searchbox.html
+~~~~~~~~~~~~~~~~~~~~
+
+Sphinx sidebar template: quick search box.
+
+:copyright: Copyright 2007-2020 by the Sphinx team, see AUTHORS.
+:license: BSD, see LICENSE for details.
+#}
+{%- if builder != "singlehtml" %}
+<form action="{{ pathto('search') }}" method="get" id="searchform">
+    <cds-search id="search"
+                size="lg"
+                label-text="Search"
+                placeholder="Search"
+                close-button-label-text="Clear search input"
+                type="text"
+                role="search"
+                name="q">
+    </cds-search>
+    <cds-ai-label class="ai" kind="inline" size="2xs" autoalign>
+        <div slot="body-text">AI was used to generate this content</div>
+    </cds-ai-label>
+</form>
+{%- endif %}

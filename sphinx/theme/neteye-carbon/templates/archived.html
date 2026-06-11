@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% set css_files = css_files + ['_static/neteye-archived.css'] %}
+{% set title = 'Archived Versions' %}
+
+{%- block content %}
+
+<div class="document cds--grid cds--grid--full-width cds--no-gutter">
+    {%- block document %}
+    <div class="cds--row">
+        <div class="cds--col content content--archived">
+            <div class="body body--no-margin-left" role="main">
+                <cds-section level="2">
+                    <cds-heading>Archived Versions</cds-heading>
+                    <p>
+                        This page lists the archived versions of the NetEye documentation.
+                    </p>
+                </cds-section>
+                <cds-section level="4">
+                    <cds-heading>NetEye 4</cds-heading>
+                    <script src="{{ pathto('_static/archived.js', 1) }}"></script>
+                    <div id="archived-container"></div>
+                </cds-section>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block rxColumn %}{% endblock %}

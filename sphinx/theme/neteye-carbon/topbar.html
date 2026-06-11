@@ -1,0 +1,90 @@
+<cds-header id="topbar" aria-label="User Guide" class="cds-theme-zone-g100">
+    <cds-header-menu-button button-label-active="Close sidebar"
+                            button-label-inactive="Open sidebar">
+    </cds-header-menu-button>
+    <cds-header-name class="header-name" href="{{ pathto('index') }}">
+        <img class="neteye-logo desktop-version"
+             src="{{ pathto('_static/img/neteye-logo.svg', 1)|e }}"/>
+        <img class="neteye-logo mobile-version"
+             src="{{ pathto('_static/img/mobile-neteye-logo.svg', 1)|e }}"/>
+        <span>User Guide</span>
+    </cds-header-name>
+
+    <div id="topbar-search">
+        {%- include "searchbox.html" %}
+        <cds-header-global-action id="show-search"
+                                  class="mobile-version header-global-action header-global-action-highlight"
+                                  aria-label="Show search"
+                                  tooltip-text="Show search">
+            <img slot="icon" src="{{ pathto('_static/icons/search.svg', 1)|e }}"/>
+        </cds-header-global-action>
+    </div>
+
+    <cds-header-nav class="header-nav" menu-bar-label="User Guide">
+        {% if toc_data %}
+            {% macro render_full_menu(items) %}
+                {% for item in items %}
+                    {% if item.children %}
+                    <cds-header-menu class="header-menu {% if item.status == 'active' %}header-menu--active{% endif %}"
+                                     trigger-content="{{ item.title }}"
+                                     menu-label="{{ item.title }}"
+                                     {% if item.status == 'active' %} is-active {% endif %}>
+                        {% for child in item.children %}
+                            {% set valid_level1_children = [] %}
+                            {% for child1 in child.children %}
+                            {% if '#' not in child1.href %}
+                            {% set _ = valid_level1_children.append(child1) %}
+                            {% endif %}
+                            {% endfor %}
+
+                            {% set href = child.href %}
+                            {% if valid_level1_children %}
+                            {% set href = valid_level1_children[0].href %}
+                            {% endif %}
+                            <cds-header-menu-item href="{{ href }}"
+                                                  class="header-menu-item {% if child.status == 'active' %}header-menu-item--active{% endif %}"
+                                                  {% if child.status == 'active' %} is-active{% endif %}>
+                                {{ child.title }}
+                            </cds-header-menu-item>
+                        {% endfor %}
+                    </cds-header-menu>
+                    {% else %}
+                    <cds-header-nav-item class="header-nav-item {% if item.status == 'active' %}header-nav-item--active{% endif %}"
+                                         href="{{ item.href }}"
+                                         {% if item.href == '' %} is-active{% endif %}>
+                        {{ item.title }}
+                    </cds-header-nav-item>
+                    {% endif %}
+                {% endfor %}
+            {% endmacro %}
+
+            {% if toc_data is string %}
+                {% set toc_data_dict = toc_data|tojson|fromjson %}
+                {% if toc_data_dict.children %}
+                    {{ render_full_menu(toc_data_dict.children) }}
+                {% endif %}
+            {% else %}
+                {{ render_full_menu(toc_data) }}
+            {% endif %}
+        {% endif %}
+    </cds-header-nav>
+    <div class="cds--header__global">
+        <!-- This header menu is filled js side -->
+        <cds-header-menu id="change-version"
+                         class="header-menu"
+                         menu-label="latest"
+                         trigger-content="latest">
+        </cds-header-menu>
+        <cds-header-global-action id="switch-theme" class="header-global-action"
+                                  aria-label="Switch theme"
+                                  tooltip-alignment="end"
+                                  tooltip-text="Switch theme">
+            <img slot="icon" id='switch-dark-mode'
+                 src="{{ pathto('_static/icons/moon.svg', 1)|e }}"/>
+            <img slot="icon" id='switch-light-mode'
+                 src="{{ pathto('_static/icons/sun.svg', 1)|e }}"/>
+        </cds-header-global-action>
+    </div>
+</cds-header>
+
+<script src="{{pathto('_static/topbar.js', 1)|e}}" async></script>
