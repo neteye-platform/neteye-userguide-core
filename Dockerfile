@@ -10,6 +10,7 @@
 #
 # Docker image can be run with
 #  docker run --rm -it --name test -p8080:8080 test_ug
+# randomline
 
 ARG UG_HOME="/tmp/ug"
 ARG UG_VERSION_TO_BUILD
