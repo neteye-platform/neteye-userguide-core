@@ -1,0 +1,66 @@
+#local-toc-nav {
+    border-left: solid 1px #E0E0E0;
+    position: sticky;
+    top: 80px;
+    margin-bottom: var(--cds-spacing-05);
+}
+
+.dark-theme #local-toc-nav {
+    border-left: solid 1px #514e4e;
+}
+
+#local-toc-nav nav {
+    padding-left: var(--cds-spacing-05);
+    padding-right: var(--cds-spacing-05);
+    display: flex;
+    flex-direction: column;
+    max-width: 20rem;
+}
+
+
+#local-toc-nav a {
+    color: #393939;
+    padding: 0 0 0.25rem;
+    font-size: .875rem;
+    line-height: 18.2px;
+    font-weight: 400;
+    letter-spacing: .16px;
+    margin-bottom: 10px;
+    position: relative;
+    left: 0;
+    text-decoration: none;
+    transition: all 200ms;
+}
+
+#local-toc-nav a:hover {
+    left: var(--cds-spacing-02);
+    text-decoration: underline;
+}
+
+.dark-theme #local-toc-nav a {
+    color: #E0E0E0;
+}
+
+#local-toc-nav a.active {
+    color: #0A9D81;
+}
+
+.right-column #local-toc-nav {
+    height: calc(100vh - 80px);
+}
+
+.right-column #local-toc-nav > .nav {
+    overflow: scroll;
+    display: block;
+    height: 100%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.right-column #local-toc-nav > .nav::-webkit-scrollbar {
+    display: none;
+}
+
+#document #local-toc-nav > nav > nav {
+    margin-bottom: 250px;
+}

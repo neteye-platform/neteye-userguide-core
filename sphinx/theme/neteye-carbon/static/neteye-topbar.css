@@ -1,0 +1,167 @@
+#topbar {
+    z-index: 8001;
+    height: var(--cds-spacing-09);
+}
+
+#topbar .mobile-version {
+    display: none;
+}
+
+/** Logo, title **/
+#topbar .header-name::part(link) {
+    width: var(--side-nav-width);
+}
+
+#topbar .header-name img.neteye-logo {
+    filter: none;
+    transition: filter 0.2s ease-in-out;
+}
+
+#topbar .header-name:hover img.neteye-logo {
+    filter: grayscale(100%) brightness(2.5);
+    transition: filter 0.2s ease-in-out;
+}
+
+#topbar .header-name span {
+    margin-left: var(--cds-spacing-05);
+    font-weight: normal;
+}
+
+/** Search bar and toggler **/
+[data-page="index"] #topbar #topbar-search.show {
+    max-width: 100%;
+    z-index: 0;
+    transition: all 800ms ease-in;
+    transition-delay: 0s;
+}
+
+[data-page="index"] #topbar #topbar-search {
+    max-width: 0;
+    overflow: hidden;
+    transition: all 600ms ease-out;
+    transition-delay: 0s;
+}
+
+#topbar #searchform #search::part(input) {
+    border-block-end: none;
+}
+
+#topbar #show-search {
+    border-bottom: 1px solid var(--cds-border-subtle);
+}
+
+/** Tree menus **/
+#topbar .header-nav::part(divider) {
+    display: none;
+}
+
+#topbar .header-menu::part(menu-body) {
+    min-inline-size: 12.5rem;
+    inline-size: 100%;
+}
+
+#topbar #change-version.header-menu::part(menu-body) {
+    inset-inline-start: unset;
+    inset-inline-end: 0;
+}
+
+#topbar .header-menu.header-menu--active::part(trigger),
+#topbar .header-menu-item.header-menu-item--active::part(link),
+#topbar .header-nav-item.header-nav-item--active::part(link) {
+    font-weight: 600;
+    color: var(--cds-text-primary);
+}
+
+#topbar .header-menu.header-menu--active::part(trigger):after,
+#topbar .header-menu-item.header-menu-item--active::part(link):after,
+#topbar .header-nav-item.header-nav-item--active::part(link):after {
+    background-color: transparent;
+}
+
+/** Global actions **/
+.header-global-action img {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.header-global-action.header-global-action-highlight {
+    background-color: var(--cds-layer);
+}
+
+/** Theme switcher **/
+#switch-theme #switch-light-mode {
+    display: none;
+}
+
+body.dark-theme #switch-theme #switch-light-mode {
+    display: block;
+}
+
+body.dark-theme #switch-theme #switch-dark-mode {
+    display: none;
+}
+
+
+@media (max-width: 1311px) {
+    #topbar #searchform {
+        display: none;
+    }
+
+    #topbar #searchform.show {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        display: flex;
+        width: 100%;
+        z-index: 1;
+    }
+
+    #topbar #searchform.show #search::part(search-icon) {
+        display: none;
+    }
+
+    #topbar #searchform.show #search::part(input) {
+        padding-inline-start: var(--cds-spacing-05);
+    }
+
+    #topbar .header-global-action.mobile-version {
+        display: flex;
+    }
+}
+
+@media (max-width: 1055px) {
+    #topbar .header-name::part(link) {
+        width: unset;
+    }
+}
+
+@media (max-width: 671px) {
+    #topbar .neteye-logo.desktop-version {
+        display: none;
+    }
+
+    #topbar .neteye-logo.mobile-version {
+        display: block;
+    }
+
+    #topbar .header-name::part(link) {
+        padding: 0 0.7rem 0 .4rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #topbar .header-name span {
+        margin-left: var(--cds-spacing-03);
+        font-size: var(--cds-legal-02-font-size);
+    }
+}
+
+@media (max-width: 1583px) {
+    .header-menu::part(trigger) {
+        padding: 0 var(--cds-spacing-03);
+    }
+}
+
+cds-header-menu-item::part(link) {
+    cursor: pointer;
+}

@@ -1,0 +1,913 @@
+html {
+    scroll-padding-top: 50px;
+}
+
+.content {
+    display: flex;
+}
+.content-side-menu {
+    flex-grow: 1;
+}
+.content--archived {
+    margin-top: var(--cds-spacing-10);
+}
+
+body[data-page="index"] .document {
+    overflow-x: hidden;
+}
+
+body:not([data-page="index"]) .document .cds--row .cds--col {
+    padding: 0;
+}
+
+body:not([data-page="index"]) .document .cds--row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+@media (min-width: 1056px) {
+    body:not([data-page="index"]) {
+        overflow-x: initial;
+    }
+
+    body[data-page="search"] .cds--col {
+        padding: 0 !important;
+    }
+
+    .content--archived {
+        margin-top: var(--cds-spacing-11);
+    }
+}
+
+body[data-page="search"] .body {
+    width: 100%;
+}
+
+.body p.search-summary {
+    margin-top: 0;
+}
+
+@media (max-width: 671px) {
+    body[data-page="search"] .body {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 671px) {
+    .content--archived {
+        margin-top: var(--cds-spacing-07);
+    }
+}
+
+html,
+body {
+    scroll-behavior: smooth;
+}
+
+/* Body structure */
+.body {
+    /* CDS has a cds-row with -16px padding and cds-col with 16px margin. Content can sometimes overflow to the right
+    of 32 pixels. This `width` calculation compensates this CDS shenanigan and also adds a 16px padding to account for
+    the scrollbar (cds-spacing-09 = 3rem) */
+    width: calc(100% - var(--cds-spacing-09));
+    max-width: 46.375rem;
+    padding-inline: calc(var(--padding-inline) / 1.5);
+    box-sizing: border-box;
+}
+
+.body > section {
+    margin-block-end: var(--cds-spacing-11);
+}
+
+.body--no-margin-left {
+    margin-left: 0;
+}
+
+@media (max-width: 671px) {
+    .body {
+        padding-inline: 1rem;
+        margin: 0;
+        width: 100%;
+    }
+}
+
+@media (min-width: 1056px) {
+    .body {
+        padding-inline: calc(var(--padding-inline) / 1.5);
+    }
+}
+
+@media (min-width: 1584px) {
+    .body {
+        padding-inline: var(--padding-inline);
+        box-sizing: unset;
+    }
+}
+
+@media (max-width: 1365px) {
+    .content-side-menu {
+        display: none;
+    }
+}
+.body .section:not(:first-child) {
+    padding-block-start: var(--cds-spacing-09);
+}
+
+/* Text */
+.body p {
+    font-size: var(--cds-body-compact-02-font-size);
+    font-weight: var(--cds-body-compact-02-font-weight);
+    line-height: var(--cds-body-compact-02-line-height);
+    letter-spacing: var(--cds-body-compact-01-letter-spacing);
+    margin-block-end: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-07);
+    /*!* Needed because on mobile otherwise long paths will generate horizontal scrolling *!*/
+    word-wrap: break-word;
+}
+.body figure figcaption p,
+cds-modal-body figcaption p {
+    font-size: var(--cds-body-short-02-font-size);
+    line-height: var(--cds-body-short-02-line-height);
+    font-weight: var(--cds-body-short-02-font-weight);
+    letter-spacing: var(--cds-body-short-02-letter-spacing);
+    margin-block-end: 0; /* bottom margin already created from the "figure" container */
+    margin-block-start: var(--cds-spacing-05);
+    color: var(--cds-text-secondary);
+}
+cds-modal::part(dialog) {
+    max-inline-size: max-content;
+}
+
+/* Links */
+.body p a,
+.body div a {
+    color: var(--cds-link-primary);
+    text-decoration: none; /* CDS doesn't have underline on links */
+}
+.body p a:hover,
+.body div a:hover {
+    text-decoration: underline;
+}
+
+/* Lists */
+.body li p {
+    margin: 0;
+}
+dl,
+ol,
+ul {
+    margin-block-start: 0;
+    margin-block-end: var(--cds-spacing-06);
+}
+
+/*!* Images *!*/
+.body figure {
+    background-color: var(--cds-layer-01);
+    width: 100%;
+    padding: var(--cds-spacing-05);
+    margin-left: calc(-1 * var(--cds-spacing-05));
+    position: relative;
+}
+.body figure img {
+    cursor: pointer;
+    width: 100%;
+}
+.body img {
+    width: 100%; /* there are some images which aren't in a figure container, e.g. http://localhost:8000/core-modules/tornado/event-processing/iterator.html */
+}
+
+/* Zoom button on images */
+.body figure::after {
+    content: "";
+    width: var(--cds-spacing-07);
+    height: var(--cds-spacing-07);
+    display: block;
+    position: absolute;
+    right: var(--cds-spacing-05);
+    top: var(--cds-spacing-05);
+    margin: var(--cds-spacing-02);
+    background-color: #ffffff;
+    background-image: url("./icons/zoom-in-black.svg");
+    background-size: var(--cds-spacing-06) var(--cds-spacing-06);
+    background-repeat: no-repeat;
+    background-position: center;
+    visibility: hidden;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.body figure:hover::after {
+    visibility: visible; /* show zoom icon when hovering */
+}
+
+/* zoomed image (modal) style */
+cds-modal {
+    max-width: 100%;
+}
+cds-modal-body img {
+    max-width: 100%;
+    max-height: calc(96vh - 96px);
+}
+/* hide copied <a> link from modal */
+cds-modal-body figcaption p a {
+    display: none;
+}
+cds-modal-body figcaption {
+    padding-block-end: 1rem;
+}
+cds-modal-body {
+    padding-block: unset;
+}
+cds-modal-header {
+    padding-block-start: var(
+        --cds-spacing-09
+    ); /* same as the button created by CDS */
+    margin: unset;
+}
+cds-modal-close-button::part(button) {
+    border-color: transparent !important;
+    outline: none;
+}
+
+/* Some inter-site href links point to these "spans" inside the figure containers. With this vertical offset, we make navigation a little prettier */
+.body figure > span {
+    top: calc(-1 * var(--cds-spacing-11));
+    position: relative;
+    float: left;
+}
+
+/* Headings */
+
+.body h1 {
+    margin-block-start: 0;
+}
+
+.body h1,
+.body h2,
+.body h3,
+.body h4,
+.body h5,
+.body h6 {
+    color: var(--cds-text-primary);
+    letter-spacing: 0;
+    position: relative;
+}
+
+.body h1 {
+    font-size: var(--cds-productive-heading-05-font-size);
+    font-weight: var(--cds-productive-heading-05-font-weight);
+    line-height: var(--cds-productive-heading-05-line-height);
+    margin-block-end: var(--cds-spacing-07);
+}
+
+.body h2 {
+    font-size: var(--cds-productive-heading-04-font-size);
+    font-weight: var(--cds-productive-heading-04-font-weight);
+    line-height: var(--cds-productive-heading-04-line-height);
+    margin-block-end: var(--cds-spacing-07);
+}
+
+.body h3 {
+    font-size: var(--cds-productive-heading-03-font-size);
+    font-weight: 500;
+    line-height: var(--cds-productive-heading-03-line-height);
+    margin-block-end: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-07);
+}
+
+.body h4 {
+    font-size: var(--cds-productive-heading-02-font-size);
+    font-weight: var(--cds-productive-heading-02-font-weight);
+    line-height: var(--cds-productive-heading-02-line-height);
+    margin-block-end: var(--cds-spacing-05);
+}
+
+.body h5 {
+    font-size: var(--cds-productive-heading-01-font-size);
+    font-weight: var(--cds-productive-heading-01-font-weight);
+    line-height: var(--cds-productive-heading-01-line-height);
+}
+
+@media (max-width: 1584px) {
+    .body h1 {
+        font-size: var(--cds-productive-heading-05-font-size);
+        font-weight: var(--cds-productive-heading-05-font-weight);
+        line-height: var(--cds-productive-heading-05-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+
+    .body h2 {
+        font-size: var(--cds-productive-heading-04-font-size);
+        font-weight: var(--cds-productive-heading-04-font-weight);
+        line-height: var(--cds-productive-heading-04-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+}
+
+@media (max-width: 1055px) {
+    .body h1 {
+        font-size: var(--cds-productive-heading-05-font-size);
+        font-weight: var(--cds-productive-heading-05-font-weight);
+        line-height: var(--cds-productive-heading-05-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+
+    .body h2 {
+        font-size: var(--cds-productive-heading-04-font-size);
+        font-weight: var(--cds-productive-heading-04-font-weight);
+        line-height: var(--cds-productive-heading-04-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+}
+
+@media (max-width: 671px) {
+    .body h1 {
+        font-size: var(--cds-productive-heading-04-font-size);
+        font-weight: var(--cds-productive-heading-04-font-weight);
+        line-height: var(--cds-productive-heading-04-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+
+    .body h2 {
+        font-size: var(--cds-productive-heading-03-font-size);
+        font-weight: var(--cds-productive-heading-03-font-weight);
+        line-height: var(--cds-productive-heading-03-line-height);
+        margin-block-end: var(--cds-spacing-07);
+    }
+}
+
+/* Header links to be displayed next to the headings */
+/* note: funny values based on arbitrary Carbon spacings */
+.body a.headerlink {
+    color: transparent !important;
+    background-image: url("icons/link.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    /* here I'm pretty much using spacing-05 as an unit, which should be 1rem on desktop */
+    height: calc(1.3 * var(--cds-spacing-05));
+    left: calc(-2.5 * var(--cds-spacing-05));
+    width: calc(1.3 * var(--cds-spacing-05));
+    top: calc(50% - 0.64 * var(--cds-spacing-05));
+}
+.body .caption .headerlink {
+    display: none;
+}
+.body a.headerlink:hover {
+    opacity: 0.7;
+}
+
+/* Temporarily turn off grabbing when you just clicked the headerlink */
+.body a.headerlink.disabled {
+    pointer-events: none;
+}
+
+/*!* Notes *!*/
+.admonition {
+    background-color: var(--cds-layer-01);
+    border-left: var(--cds-spacing-02) solid;
+    margin-left: calc(-1 * var(--cds-spacing-05));
+    margin-block-end: var(--cds-spacing-05);
+    margin-block-start: var(--cds-spacing-04);
+    padding-top: var(--cds-spacing-04);
+    padding-inline-start: var(--cds-spacing-05);
+    padding-inline-end: var(--cds-spacing-09);
+    padding-bottom: var(--cds-spacing-06);
+}
+.admonition .admonition-title {
+    font-weight: var(
+        --cds-heading-compact-01-font-weight
+    ); /* note: hardcoded value, there's no CDS font set with this weight */
+}
+/* (css styles for the 4 (as of date) types of notes */
+/* notes */
+.admonition.note .admonition-title {
+    color: var(--primary-color-light);
+}
+.admonition.note {
+    border-color: var(--primary-color-light);
+}
+/* hints */
+.admonition.hint .admonition-title {
+    color: var(--cds-text-primary);
+}
+.admonition.hint {
+    border-color: var(--cds-border-strong-03);
+}
+/* tips */
+.admonition.tip .admonition-title {
+    color: var(--cds-text-primary);
+}
+.admonition.tip {
+    border-color: var(--cds-border-strong-03);
+}
+/* warnings */
+.admonition.warning .admonition-title {
+    color: var(--cds-support-caution-major);
+}
+.admonition.warning {
+    border-color: var(--cds-support-caution-major);
+}
+/* other elements */
+.admonition p {
+    font-size: var(--cds-caption-02-font-size);
+    margin: 0;
+}
+.body .admonition code {
+    font-size: var(--cds-caption-02-font-size);
+    font-weight: var(--cds-caption-02-font-weight);
+}
+
+/* Topics! */
+.topic {
+    background: var(--cds-layer-01);
+    margin-block-end: var(--cds-spacing-05);
+    margin-block-start: var(--cds-spacing-05);
+    margin-left: calc(-1 * var(--cds-spacing-05));
+    padding: var(--cds-spacing-03) var(--cds-spacing-05) var(--cds-spacing-07)
+        var(--cds-spacing-05);
+}
+.topic .topic-title {
+    font-weight: var(--cds-heading-compact-01-font-weight);
+}
+.topic p {
+    margin: 0;
+}
+
+/* rubrics */
+p.rubric {
+    font-weight: var(--cds-heading-compact-01-font-weight);
+}
+
+/* Tables */
+.body table {
+    border-collapse: collapse;
+    background-color: var(--cds-layer-01);
+    display: table;
+    width: 100%;
+    margin-left: calc(-1 * var(--cds-spacing-05));
+    overflow-x: auto;
+    padding: var(--cds-spacing-05) var(--cds-spacing-05) 0 var(--cds-spacing-07);
+    margin-block-end: var(--cds-spacing-05);
+}
+.body table thead {
+    border-bottom: 1px solid #e0e0e0;
+}
+.body table thead .head p {
+    margin: 0;
+    box-sizing: border-box;
+    padding: var(--cds-spacing-05) var(--cds-spacing-05) var(--cds-spacing-03);
+    font-size: var(--cds-heading-compact-01-font-size);
+    font-weight: var(--cds-heading-compact-01-font-weight);
+    line-height: var(--cds-heading-compact-01-line-height);
+    letter-spacing: var(--cds-heading-compact-01-letter-spacing);
+    display: table-cell;
+    height: var(--cds-spacing-08);
+    color: var(--cds-text-primary);
+    text-align: left;
+    text-transform: none;
+    vertical-align: bottom;
+}
+.body table tbody tr:not(:last-child) {
+    border-bottom: 1px solid var(--cds-layer-accent-01);
+    transition: background-color 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+.body table tbody tr td {
+    box-sizing: border-box;
+    border: 0;
+    margin: 0;
+    padding: var(--cds-spacing-05) var(--cds-spacing-05) var(--cds-spacing-06);
+    position: relative;
+    display: table-cell;
+    max-width: var(--cds-spacing-13);
+}
+.body table tbody tr td p {
+    font-size: var(--cds-body-compact-01-font-size);
+    font-weight: var(--cds-body-compact-01-font-weight);
+    line-height: var(--cds-body-compact-01-line-height);
+    letter-spacing: var(--cds-body-compact-01-letter-spacing);
+    margin: 0;
+    color: var(--cds-text-secondary);
+    transition: color 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+.body table caption {
+    padding-bottom: var(--cds-spacing-04);
+    font-size: var(--cds-caption-02-font-size);
+}
+
+/*!* Code *!*/
+
+/*!* Inline code *!*/
+.body code {
+    background-color: var(--cds-layer-accent-01);
+    color: var(--cds-text-secondary);
+    font-size: var(--cds-code-02-font-size);
+    line-height: var(--cds-code-02-line-height);
+    padding: var(--cds-spacing-01) var(--cds-spacing-02);
+}
+.body code .pre {
+    font-family: var(--cds-code-02-font-family);
+}
+
+/* Code blocks */
+.body .highlight {
+    background-color: var(--cds-layer-01);
+    margin-block-end: var(--cds-spacing-05);
+    margin-block-start: var(--cds-spacing-05);
+    padding: var(--cds-spacing-02) var(--cds-spacing-02) var(--cds-spacing-02)
+        var(--cds-spacing-05);
+    overflow: visible;
+    max-width: 100%;
+}
+/* change margins if used in an ammonition */
+.body .admonition .highlight {
+    margin-block-end: 0;
+    background-color: var(--cds-layer-02);
+    margin-left: var(--cds-spacing-05);
+}
+/* container for `highlight` class */
+.body [class^="highlight-"].notranslate {
+    position: relative;
+    margin-left: calc(-1 * var(--cds-spacing-05));
+}
+.body .highlight pre {
+    padding: var(--cds-spacing-03) 0;
+    align-items: center;
+    background-color: transparent;
+    color: var(--primary-color-light);
+    font-family: var(--cds-code-02-font-family);
+    font-size: var(--cds-code-02-font-size);
+    font-weight: var(--cds-code-02-font-weight);
+    line-height: var(--cds-code-02-line-height);
+    letter-spacing: var(--cds-code-02-letter-spacing);
+    margin: 0 var(--cds-spacing-07) 0 0;
+    overflow: auto;
+}
+/* Styling for the copy button */
+.highlight button.copybtn,
+.highlight:hover button.copybtn,
+.highlight button.copybtn:active,
+.highlight button.copybtn:focus,
+button.copybtn {
+    background: unset;
+    display: inline-block;
+    opacity: unset;
+    border: unset;
+    border-radius: unset;
+    width: var(--cds-spacing-07);
+    height: var(--cds-spacing-07);
+    top: var(--cds-spacing-02);
+    right: var(--cds-spacing-02);
+    transition: unset;
+    background-size: var(--cds-spacing-05) var(--cds-spacing-05);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    float: right;
+    background-image: url(./icons/copy-black.svg);
+    outline: unset;
+}
+.highlight button.copybtn:hover {
+    /* when viewing the UG, there is a `copybutton.css?..` file in _static which tries to overwrite these values.*/
+    /*!important is thus required, as I'm not sure where this problem comes from*/
+    background-color: var(--cds-layer-hover-01) !important;
+}
+.highlight button.copybtn:active {
+    background-color: var(
+        --cds-layer-active-01
+    ) !important; /* same problem as with copybtn:hover */
+}
+button.copybtn img,
+button.copybtn svg,
+.o-tooltip--left:hover:after {
+    display: none !important;
+}
+
+/* css code for the "Copied!" tooltip that pops up when clicking the copy button.
+   It is currently used both in code snippets and headerlinks */
+
+/* set spacing and size when used in code snippets */
+.document .highlight span.tooltip {
+    right: calc(
+        var(--cds-spacing-02) + var(--cds-spacing-07) / 2
+    ); /* same as the copy button */
+    transform: translate(50%, 150%);
+}
+
+/* set spacing and size when used in headerlinks */
+.document :is(h1, h2, h3, h4, h5, h6) a > span.tooltip {
+    left: calc(-2 * var(--cds-spacing-05));
+    transform: translate(0%, 150%);
+}
+
+/* common css for tooltip */
+.document span.tooltip {
+    position: absolute;
+    top: 0;
+    padding: var(--cds-spacing-02) var(--cds-spacing-04);
+    background-color: var(--cds-icon-primary);
+    display: inline-flex;
+    justify-content: center;
+    line-height: 1; /* Helps vertically align the text */
+}
+/* pretty arrow for the "Copied!" popup */
+.document span.tooltip span.arrow {
+    position: absolute;
+    width: var(--cds-spacing-04);
+    height: var(--cds-spacing-04);
+    top: calc(-1 * var(--cds-spacing-02));
+    background-color: inherit;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+/* "Copied!" text */
+.document span.tooltip span.text {
+    padding: var(--cds-spacing-01) 0;
+    color: var(--cds-layer-01);
+    font-family: var(--cds-code-02-font-family);
+    font-size: var(--cds-code-02-font-size);
+}
+
+/*!* Command output *!*/
+.body .container.codeblock .highlight {
+    margin-left: 0;
+    padding: var(--cds-spacing-05);
+    padding-inline-end: var(--cds-spacing-05) !important;
+}
+.body .container.codeblock .highlight pre,
+.body .container.codeblock .highlight pre .c1,
+.body .container.codeblock .highlight pre .nb,
+.body .container.codeblock .highlight pre .nt,
+.body .container.codeblock .highlight pre .kc {
+    color: var(--cds-text-primary);
+    line-height: var(--cds-code-01-line-height);
+    overflow: hidden;
+    white-space: break-spaces;
+}
+
+/*!* this ensure that links on other pages will lead*/
+/* * to correct section displaying the title*/
+.section > span[id]::before {
+    content: "";
+    display: block;
+    height: var(--cds-spacing-09);
+    margin-block-start: calc(-1 * var(--cds-spacing-09));
+    visibility: hidden;
+}
+
+/*!* TOC *!*/
+.body .toctree-wrapper {
+    padding-top: 0.5em;
+}
+.body .toctree-wrapper ul {
+    padding-inline-start: 0;
+    list-style: none;
+}
+.body .toctree-wrapper ul li {
+    background: url("./icons/jump-link-dark.svg") no-repeat 0
+        var(--cds-spacing-01);
+    padding-inline-start: var(--cds-spacing-07);
+}
+
+body.dark-theme .body .toctree-wrapper ul li {
+    background: url("./icons/jump-link.svg") no-repeat 0 var(--cds-spacing-01);
+    padding-inline-start: var(--cds-spacing-07);
+}
+
+.body .toctree-wrapper ul li a {
+    color: var(--cds-background-inverse);
+    line-height: 163%; /* hardcoded value, I don't think its carbonizable */
+}
+
+.body .highlight pre::-webkit-scrollbar {
+    height: var(--cds-spacing-03);
+}
+.body .highlight pre::-webkit-scrollbar-thumb {
+    background-color: var(--cds-layer-hover-01);
+}
+.body .highlight pre:hover::-webkit-scrollbar-thumb {
+    background-color: var(--cds-layer-active-01);
+}
+.body .highlight pre:active::-webkit-scrollbar-thumb {
+    background-color: var(--cds-layer-accent-active-01);
+}
+
+/* Roles (various items) */
+.body .manpage {
+    text-decoration: underline;
+    font-style: normal;
+}
+
+.body .reference .xref {
+    text-decoration: underline;
+    font-style: italic;
+    color: var(--cds-background-inverse);
+}
+
+.body .file,
+.body .command,
+.body .guilabel {
+    padding: var(--cds-spacing-01) var(--cds-spacing-02);
+    font-weight: normal;
+}
+.body .file .pre {
+    font-family: var(--cds-code-01-font-family);
+}
+.body .file,
+.body .command {
+    background: var(--cds-layer-accent-01);
+    color: var(--cds-text-secondary);
+}
+
+.body .guilabel {
+    background: var(--cds-border-tile-01);
+    color: var(--cds-text-primary);
+}
+
+.body .menuselection {
+    font-weight: bold;
+}
+.body abbr {
+    cursor: help;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--cds-background-inverse);
+}
+
+.body .phone {
+    white-space: nowrap;
+}
+
+#bottom-nav {
+    background: #393939;
+    position: relative;
+}
+
+#bottom-nav .nav {
+    flex-wrap: nowrap;
+    margin-bottom: 0;
+    list-style: none !important;
+}
+
+#bottom-nav .main-content {
+    padding-inline: var(--padding-inline);
+}
+
+#bottom-nav .nav .nav-item {
+    width: 50%;
+    display: flex;
+}
+
+#bottom-nav .nav.nav-fill {
+    display: flex;
+    padding-inline-start: 0;
+    margin-left: calc(-1 * var(--cds-spacing-05));
+    max-width: 47.375rem;
+}
+
+#bottom-nav .nav .nav-item:nth-child(2) {
+    background-color: #525252;
+}
+
+#bottom-nav .nav .nav-item .nav-link:hover {
+    background-color: #191919;
+}
+
+#bottom-nav .nav-link {
+    display: block;
+    text-decoration: none;
+    color: #f4f4f4;
+    text-align: left;
+    border-radius: 0;
+    padding: 1rem 1rem 3.75rem 1rem;
+    width: 100%;
+    transition: all 300ms;
+}
+
+#bottom-nav .nav-link > div {
+    display: flex;
+    flex-direction: column;
+}
+
+#bottom-nav .nav-link .d-block {
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 30px;
+}
+
+#bottom-nav .nav-link .d-block.static-title {
+    font-size: 0.875rem;
+    line-height: 21px;
+}
+
+@media (max-width: 1583px) {
+    #bottom-nav .main-content {
+        padding-inline: calc(var(--padding-inline) / 1.5);
+    }
+    #bottom-nav .nav.nav-fill {
+        max-width: 37.375rem;
+    }
+}
+
+@media (max-width: 1055px) {
+    #bottom-nav {
+        display: none;
+    }
+}
+
+/* compact mode fine-tunes */
+@media (max-width: 768px) {
+    .body .figure,
+    .body table {
+        width: 100%;
+    }
+
+    .body .figure,
+    .body [class^="highlight-"].notranslate,
+    .body table,
+    .admonition,
+    .topic,
+    .body .versionadded .body .versionchanged,
+    .body .deprecated {
+        margin-left: 0;
+    }
+
+    .body .figure::after {
+        visibility: visible !important;
+    }
+}
+
+/* archived page */
+
+.content--archived p {
+    color: var(--cds-text-helper);
+    margin-top: var(--cds-spacing-04);
+}
+
+#archived-container {
+    margin-top: var(--cds-spacing-05);
+}
+
+#archived-container ul {
+    appearance: none;
+    gap: 1px;
+    padding-left: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 671px) {
+    #archived-container ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1056px) {
+    #archived-container ul {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+#archived-container ul li {
+    display: flex;
+}
+
+#archived-container ul li a {
+    position: relative;
+    background-color: var(--cds-layer-01);
+    left: 0;
+    flex-grow: 1;
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: right;
+    padding-inline-start: var(--cds-spacing-07);
+    transition: all 200ms;
+    padding: var(--cds-spacing-11) var(--cds-spacing-05) var(--cds-spacing-04)
+        var(--cds-spacing-05);
+
+    text-decoration: none;
+    font-size: var(--cds-body-compact-01-font-size);
+    gap: var(--cds-spacing-03);
+}
+
+#archived-container ul li a svg {
+    height: 1rem;
+    width: auto;
+    position: relative;
+    margin-bottom: 0.1rem;
+}
+
+.dark-theme #archived-container ul li a svg {
+    filter: invert(1);
+}
+
+@media (min-width: 1056px) {
+    #archived-container ul li a:hover {
+        background-color: var(--cds-layer-hover);
+    }
+}
+
+body.dark-theme .highlight .nt {
+    color: #a1efe4;
+}
+
+body.dark-theme .highlight .s2 {
+    color: #a6e22e;
+}

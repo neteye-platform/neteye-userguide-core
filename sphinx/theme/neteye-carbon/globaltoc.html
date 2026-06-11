@@ -1,0 +1,230 @@
+{% block menu %}
+
+{% set hrefs_with_hash = [] %}
+{% for item in local_toc_data.children %}
+    {% if '#' in item.href %}
+        {% set _ = hrefs_with_hash.append(item.href) %}
+    {% endif %}
+{% endfor %}
+
+{% set local_sidebar_empty = hrefs_with_hash | length > 0 or not local_toc_data.children %}
+
+{% set hide_sidebar = hrefs_with_hash | length == 0 and not local_toc_data.children is defined %}
+
+<cds-side-nav
+    id="sidebar"
+    class="side-navigation-panel {% if local_sidebar_empty %} local-sidebar-is-empty {% endif %} {% if hide_sidebar %} hide-sidebar {% endif %}"
+    aria-label="Side navigation"
+>
+
+    <div class="side-panel-header">
+        <button
+            aria-labelledby="Toggle mobile full menu"
+            class="summon-parent-menu toggle-control"
+        >
+            <span>
+		 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                  <polygon fill="currentColor" points="18 6 16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6"/>
+                  <rect width="32" height="32" fill="none"/>
+                </svg>
+            </span>
+            {% if parent_toc_data.title %}
+                <span>See all <strong>{{ parent_toc_data.title }}</strong> pages</span>
+            {% else %}
+                <span>See Parent Menu</span>
+            {% endif %}
+        </button>
+
+        <button
+            aria-labelledby="Toggle mobile full menu"
+            class="close-parent-menu toggle-control"
+        >
+            <span>
+		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                  <polygon fill="currentColor" points="14 26 15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26"/>
+                  <rect width="32" height="32" fill="none"/>
+                </svg>
+            </span>
+            <span>
+                <strong>Close</strong>
+            </span>
+        </button>
+    </div>
+
+    <!-- current page menu -->
+
+    {% macro render_local_menu(current_page_menu) %}
+        {% if current_page_menu and pagename != 'index' %}
+        <cds-side-nav-menu
+            class="side-menu-local fake-dropdown {% if not current_page_menu.children %} lonely-child {% endif %}"
+            expanded
+        >
+            {% if current_page_menu.title %}
+                <div class="module-header">
+                    <img alt="module icon" class="core-module-icon" src="{{pathto(side_panel_icon,1)|e}}">
+                    <strong>{{current_page_menu.title}}</strong>
+                </div>
+            {% endif %}
+
+            <div class="local-side-menu">
+                {% if current_page_menu.children %}
+                    {% for level0 in current_page_menu.children %}
+                        {% set valid_level0_children = [] %}
+                        {% for level1 in level0.children %}
+                            {% if '#' not in level1.href %}
+                                {% set _ = valid_level0_children.append(level1) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if valid_level0_children %}
+                            <cds-side-nav-menu
+                                class="side-menu-lvl0 {% if level0.status == 'active' %}expanded{% endif %}"
+                                title="{{ level0.title }}" {% if level0.status == 'active' %}active expanded{% endif %}
+                            >
+                                {% for level1 in valid_level0_children %}
+                                    <cds-side-nav-menu-item
+                                        class="side-menu-lvl1"
+                                        href="{{ level1.href }}" {% if level1.status == 'active' %}active{% endif %}
+                                    >
+                                        {{ level1.title }}
+                                    </cds-side-nav-menu-item>
+                                {% endfor %}
+                            </cds-side-nav-menu>
+                        {% elif '#' not in level0.href %}
+                            <cds-side-nav-menu-item
+                                class="side-menu-lvl0"
+                                href="{{ level0.href }}" {% if level0.status == 'active' %}active{% endif %}
+                            >
+                                {{ level0.title }}
+                            </cds-side-nav-menu-item>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+        </cds-side-nav-menu>
+
+        {% endif %}
+    {% endmacro %}
+
+    {% if local_toc_data %}
+        {{ render_local_menu(local_toc_data) }}
+    {% endif %}
+
+
+    <!-- parent summonable menu -->
+
+    {% if parent_toc_data %}
+
+        <cds-side-nav-items class="side-menu-parent fake-dropdown">
+            {% macro render_full_menu(parent_page_menu) %}
+                {% for level0 in parent_page_menu.children %}
+
+                    {% set href = level0.href %}
+                    {% if level0.children %}
+                        {% set href = level0.children[0].href %}
+                    {% endif %}
+
+                    <cds-side-nav-link
+                        href="{{ href }}"
+                        class="side-menu-lvl0" {% if level0.status == 'active' %}active{% endif %}
+                    >
+                        {{ level0.title }}
+                    </cds-side-nav-link>
+                {% endfor %}
+            {% endmacro %}
+
+            {% if parent_toc_data %}
+                {{ render_full_menu(parent_toc_data) }}
+            {% endif %}
+        </cds-side-nav-items>
+    {% endif %}
+
+    <!-- mobile complete menu -->
+
+    {% if toc_data %}
+        <cds-side-nav-items class="side-menu-general" expanded>
+            {% macro render_full_menu(complete_menu) %}
+                {% for level0 in complete_menu %}
+                    {% if level0.children %}
+                        <cds-side-nav-menu
+                            title="{{ level0.title }}"
+                            class="side-menu-lvl0" {% if level0.status == 'active' %}active expanded{% endif %}
+                        >
+                            {% for level1 in level0.children %}
+                                {% if level1.children %}
+                                    <cds-side-nav-menu
+                                        class="side-menu-lvl1 {% if level1.status == 'active' %}side-menu-lvl1--expanded{% endif %}"
+                                        title="{{ level1.title }}"
+                                        {% if level1.status == 'active' %} active expanded{% endif %}
+                                    >
+                                        {% for level2 in level1.children if '#' not in level2.href %}
+                                            {% set valid_level2_children = [] %}
+                                            {% for child2 in level2.children %}
+                                                {% if '#' not in child2.href %}
+                                                    {% set _ = valid_level2_children.append(child2) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if valid_level2_children %}
+                                                <cds-side-nav-menu
+                                                    class="side-menu-lvl2 {% if level2.status == 'active' %}side-menu-lvl2--expanded{% endif %}"
+                                                    title="{{ level2.title }}" {% if level2.status == 'active' %} active expanded {% endif %}
+                                                >
+                                                    {% for level3 in level2.children if '#' not in level3.href %}
+
+                                                        <cds-side-nav-menu-item
+                                                            class="side-menu-lvl3"
+                                                            href="{{ level3.href }}" {% if level3.status == 'active' %} active{% endif %}>
+                                                        {{ level3.title }}
+                                                        </cds-side-nav-menu-item>
+                                                    {% endfor %}
+                                                </cds-side-nav-menu>
+                                            {% else %}
+                                                <cds-side-nav-menu-item
+                                                    class="side-menu-lvl2 {% if level2.status == 'active' %}side-menu-lvl2--expanded{% endif %}"
+                                                    href="{{ level2.href }}" {% if level2.status == 'active' %} active{% endif %}
+                                                >
+                                                    {{ level2.title }}
+                                                </cds-side-nav-menu-item>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </cds-side-nav-menu>
+                                {% else %}
+                                    <cds-side-nav-menu-item
+                                        class="side-menu-lvl1"
+                                        href="{{ level1.href }}" {% if level1.status == 'active' %} active{% endif %}
+                                    >
+                                        {{ level1.title }}
+                                    </cds-side-nav-menu-item>
+                                {% endif %}
+                            {% endfor %}
+                        </cds-side-nav-menu>
+                    {% else %}
+                        <cds-side-nav-menu-item
+                            href="{{ level0.href }}"
+                            class="side-menu-lvl0" {% if level0.status == 'active' %}side-menu-lvl0--active{% endif %}
+                        >
+                            {{ item.title }}
+                        </cds-side-nav-menu-item>
+                    {% endif %}
+                {% endfor %}
+            {% endmacro %}
+
+            {% if toc_data is string %}
+                {% set toc_data_dict = toc_data|tojson|fromjson %}
+                {% if toc_data_dict.children %}
+                    {{ render_full_menu(toc_data_dict.children) }}
+                {% endif %}
+            {% else %}
+                {{ render_full_menu(toc_data) }}
+            {% endif %}
+
+        </cds-side-nav-items>
+    {% endif %}
+
+</cds-side-nav>
+
+<div class="side-menu-overlay"></div>
+
+{% endblock %}
+
+<script src="{{pathto('_static/sidebar.js', 1)|e}}" async></script>

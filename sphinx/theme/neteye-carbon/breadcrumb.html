@@ -1,0 +1,14 @@
+<cds-breadcrumb no-trailing-slash>
+{%- for parent in parents %}
+    <cds-breadcrumb-item>
+        <cds-breadcrumb-link class="breadcrumb-link" href="{{ parent.link|e }}"
+            {% if loop.last %}
+            {{ accesskey("U") }}
+            isCurrentPage
+            {% endif %}
+        >
+        {{ parent.title }}
+        </cds-breadcrumb-link>
+    </cds-breadcrumb-item>
+    {%- endfor %}
+</cds-breadcrumb>
