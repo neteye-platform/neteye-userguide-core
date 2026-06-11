@@ -1,0 +1,45 @@
+.body .linked_modules div {
+    display: flex;
+    flex-wrap: wrap;
+    margin-block-end: var(--cds-spacing-10);
+    margin-left: calc(-1 * var(--cds-spacing-05));
+}
+
+.body .linked_modules div cds-clickable-tile {
+    flex: 0 0 49%; /* two columns */
+    padding: 1px;
+}
+@media (max-width: 768px) {
+    .body .linked_modules div cds-clickable-tile {
+        flex: 0 0 100%; /* one column on small screens */
+    }
+}
+
+/* reset margin created by neteye-document.css */
+.body .linked_modules h4 {
+    margin-block: 0 0;
+    line-height: var(--cds-spacing-05);
+    margin-inline-end: var(--cds-spacing-07); /* space for icon */
+}
+.body .linked_modules h1 {
+    margin-block: 0 var(--cds-spacing-05);
+}
+
+.body .linked_modules p {
+    max-width: calc(17.625 * var(--cds-spacing-05));
+    margin-block: var(--cds-spacing-05) 0;
+    font-size: var(--cds-caption-01-font-size);
+    color: var(--cds-text-secondary);
+}
+
+.body .linked_modules img {
+    height: calc(1.25 * var(--cds-spacing-05)); /* 20px */
+    width: calc(1.25 * var(--cds-spacing-05));
+    position: absolute;
+    right: var(--cds-spacing-05);
+    top: var(--cds-spacing-05);
+}
+
+.dark-theme .body .linked_modules img {
+    filter: brightness(150);
+}

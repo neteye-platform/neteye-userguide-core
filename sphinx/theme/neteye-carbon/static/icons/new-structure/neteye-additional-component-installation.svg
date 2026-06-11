@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="book (2)" clip-path="url(#clip0_4278_11626)">
+<path id="Vector" d="M26 10H19V12H26V10Z" fill="#161616"/>
+<path id="Vector_2" d="M26 15H19V17H26V15Z" fill="#161616"/>
+<path id="Vector_3" d="M26 20H19V22H26V20Z" fill="#161616"/>
+<path id="Vector_4" d="M13 10H6V12H13V10Z" fill="#161616"/>
+<path id="Vector_5" d="M13 15H6V17H13V15Z" fill="#161616"/>
+<path id="Vector_6" d="M13 20H6V22H13V20Z" fill="#161616"/>
+<path id="Vector_7" d="M28 5H4C3.46973 5.00053 2.96133 5.21141 2.58637 5.58637C2.21141 5.96133 2.00053 6.46973 2 7V25C2.00053 25.5303 2.21141 26.0387 2.58637 26.4136C2.96133 26.7886 3.46973 26.9995 4 27H28C28.5303 26.9995 29.0387 26.7886 29.4136 26.4136C29.7886 26.0387 29.9995 25.5303 30 25V7C29.9995 6.46973 29.7886 5.96133 29.4136 5.58637C29.0387 5.21141 28.5303 5.00053 28 5ZM4 7H15V25H4V7ZM17 25V7H28V25H17Z" fill="#161616"/>
+</g>
+<defs>
+<clipPath id="clip0_4278_11626">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

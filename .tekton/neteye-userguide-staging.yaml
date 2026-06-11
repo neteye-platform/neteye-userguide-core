@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: neteye-userguide-staging
+  annotations:
+    pipelinesascode.tekton.dev/on-event: "[push]"
+    pipelinesascode.tekton.dev/on-target-branch: "[main, maint-*]"
+    pipelinesascode.tekton.dev/max-keep-runs: "5"
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    resolver: git
+    params:
+      - name: gitToken
+        value: "git-resolver"
+      - name: pathInRepo
+        value: neteye-userguide/neteye-userguide-staging.yaml
+      - name: revision
+        value: master
+  timeouts:
+    pipeline: "1h00m0s"
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi
+          storageClassName: ocs-storagecluster-cephfs-sing-rep
+        status: {}
+  params:
+    - name: taskRevision
+      value: master
+    - name: sourceGitBranch
+      value: "{{ source_branch }}"
+    - name: author
+      value: "{{ sender }}"
+    - name: ugFeatures
+      value: ["prod"]

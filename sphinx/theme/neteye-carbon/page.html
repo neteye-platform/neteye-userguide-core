@@ -1,0 +1,10 @@
+{# Master template for simple pages. #}
+{%- extends "layout.html" %}
+{% block body %}
+    {% if linked_modules is defined %}
+        {%- block linked_module_tile %}
+            {%- include "linked-module-tile.html" %}
+        {%- endblock %}
+    {% endif %}
+    {{ body }}
+{% endblock %}

@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: neteye-userguide-pr-testing
+  annotations:
+    pipelinesascode.tekton.dev/on-event: "[pull_request]"
+    pipelinesascode.tekton.dev/on-target-branch: "[main, maint-*]"
+    pipelinesascode.tekton.dev/max-keep-runs: "5"
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    resolver: git
+    params:
+      - name: gitToken
+        value: "git-resolver"
+      - name: pathInRepo
+        value: neteye-userguide/neteye-userguide-alpha.yaml
+      - name: revision
+        value: master
+  timeouts:
+    pipeline: "1h00m0s"
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi
+          storageClassName: ocs-storagecluster-cephfs-sing-rep
+        status: {}
+  params:
+    - name: taskRevision
+      value: master
+    - name: prDestinationBranch
+      value: "{{ target_branch }}"
+    - name: projects
+      value: "{{ repo_name }}:{{ source_branch }}"
+    - name: GitOpsBranch
+      value: prod
+    - name: author
+      value: "{{ sender }}"
+    - name: ugFeatures
+      value: ["prod"]
