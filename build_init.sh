@@ -36,7 +36,7 @@ checkout_branch_if_exists() {
 }
 
 TARGET_BRANCH="$1"
-DEFAULT_BRANCH="master"
+DEFAULT_BRANCH="main"
 SUBMODULE_BASE_DIR="sphinx/source"
 
 if [ -z "$TARGET_BRANCH" ]; then
