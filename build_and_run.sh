@@ -123,9 +123,9 @@ handle_error() {
 }
 
 if [ "$PARALLEL" = "true" ]; then
-    JOBS_AUTO="--jobs auto"
+    JOBS_OPTS=("--jobs" "auto")
 else
-    JOBS_AUTO=""
+    JOBS_OPTS=()
 fi
 
 # if DEVELOPMENT_MODE create a new virtualenv if it does not exist and install requirements_dev.txt
@@ -151,7 +151,7 @@ if [ "$DEVELOPMENT_MODE" = "true" ]; then
     curl -o ${HTML_BUILD_DIR}/last_archived_version.json https://neteye.guide/last_archived_version.json
 
     # Remove -a if needed (https://github.com/sphinx-doc/sphinx-autobuild#working-on-a-sphinx-html-theme)
-    sphinx-autobuild -c ./sphinx/ -b html ./sphinx/source ${HTML_BUILD_DIR}/ --watch ./sphinx/theme/ "${JOBS_AUTO}" -a
+    sphinx-autobuild --conf-dir ./sphinx/ --builder html --watch ./sphinx/theme/ "${JOBS_OPTS[@]}" --write-all ./sphinx/source ${HTML_BUILD_DIR}/
 else
     "$CONTAINER_ENGINE" build -t test_userguide_build --build-arg UG_VERSION_TO_BUILD="$UG_NETEYE_VERSION" --build-arg FEATURE_TO_BUILD="$FEATURE" --build-arg BUILD_NUMBER=666 -f Dockerfile --no-cache --progress=plain --build-arg IGNORE_WARNINGS="$IGNORE_WARNINGS" .
     handle_error $? "Error building container"
