@@ -7,7 +7,7 @@
     padding-inline: calc(var(--padding-inline)/1.5);
     padding-top: 3rem;
     padding-block-end: 2rem;
-    background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%) 50%, rgb(0 0 0 / 80%) 100%), url("./img/header-bg.jpg");
+    background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%) 50%, rgb(0 0 0 / 80%) 100%), url("./img/header-bg.webp");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -38,7 +38,7 @@
     }
 
     #banner {
-        background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%) 15%, rgb(0 0 0 / 80%) 100%), url("./img/header-bg.jpg")
+        background-image: linear-gradient(to bottom, rgb(0 0 0 / 0%) 15%, rgb(0 0 0 / 80%) 100%), url("./img/header-bg.webp");
     }
 
     #banner .banner-gradient {
