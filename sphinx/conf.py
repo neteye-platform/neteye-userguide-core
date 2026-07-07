@@ -89,19 +89,19 @@ tg_linux = (
 
 rst_prolog = f"""
 .. |chevron| image:: /icons/chevron.ico
-   :width: 12
+   :width: 12px
 .. |reload| image:: /icons/reload.ico
-   :width: 12
+   :width: 12px
 .. |edit| image:: /icons/edit.ico
-   :width: 12
+   :width: 12px
 .. |trashbin| image:: /icons/trash-bin.ico
-   :width: 12
+   :width: 12px
 .. |uparrow| image:: /icons/up-arrow.ico
-   :width: 8
+   :width: 8px
 .. |downarrow| image:: /icons/down-arrow.ico
-   :width: 8
+   :width: 8px
 .. |gear| image:: /icons/gear.ico
-   :width: 8
+   :width: 8px
 .. role:: phone
 .. |witit| replace:: Würth IT Italy
 .. |ne| replace:: NetEye
