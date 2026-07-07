@@ -149,7 +149,7 @@ if [ "$DEVELOPMENT_MODE" = "true" ]; then
     mkdir -p ${HTML_BUILD_DIR}
     curl -o ${HTML_BUILD_DIR}/versions.json https://neteye.guide/versions.json
     curl -o ${HTML_BUILD_DIR}/last_archived_version.json https://neteye.guide/last_archived_version.json
-    
+
     # Copy version-independent static assets (e.g. logos) into build output
     cp -r ./static ${HTML_BUILD_DIR}/
 
