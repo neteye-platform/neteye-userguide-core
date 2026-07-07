@@ -150,6 +150,9 @@ if [ "$DEVELOPMENT_MODE" = "true" ]; then
     curl -o ${HTML_BUILD_DIR}/versions.json https://neteye.guide/versions.json
     curl -o ${HTML_BUILD_DIR}/last_archived_version.json https://neteye.guide/last_archived_version.json
 
+    # Copy version-independent static assets (e.g. logos) into build output
+    cp -r ./static ${HTML_BUILD_DIR}/
+
     # Remove -a if needed (https://github.com/sphinx-doc/sphinx-autobuild#working-on-a-sphinx-html-theme)
     sphinx-autobuild --conf-dir ./sphinx/ --builder html --watch ./sphinx/theme/ "${JOBS_OPTS[@]}" --write-all ./sphinx/source ${HTML_BUILD_DIR}/
 else
