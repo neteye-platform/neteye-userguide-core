@@ -103,6 +103,7 @@ rst_prolog = f"""
 .. |gear| image:: /icons/gear.ico
    :width: 8
 .. role:: phone
+.. |witit| replace:: Würth IT Italy
 .. |ne| replace:: NetEye
 .. |neb| replace:: **NetEye**
 .. |nei| replace:: `NetEye`
