@@ -29,7 +29,7 @@ ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
 
-RUN apk add --no-cache curl=8.19.0-r0 grep=3.12-r0 jq=1.8.1-r0
+RUN apk add --no-cache "curl>=8.20.0" "grep>=3.12" "jq>=1.8.1"
 
 COPY ./ $UG_HOME
 
@@ -84,7 +84,7 @@ COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERS
 # in /usr/share/nginx/html, the other ones we can create a symlink to the
 # /usr/share/nginx/all/
 
-RUN apk add jq=1.8.1-r0 zip=3.0-r13 --no-cache
+RUN apk add "jq>=1.8.1" "zip>=3.0" --no-cache
 COPY ./src/scripts/archive_ug_version.sh $UG_HOME/src/scripts/archive_ug_versions.sh
 COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 
