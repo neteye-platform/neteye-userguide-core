@@ -357,9 +357,9 @@ Promise.all(carbonTags.map(tag => customElements.whenDefined(tag))).then((tag) =
         const shadowRoot = sideNav.shadowRoot;
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        const version = Number(window.location.pathname.split('/')[1]);
+        const version = window.location.pathname.split('/')[1];
         link.href = `/_static/carbon-custom-css/side-nav.css`;
-        if(version && version > 0) {
+        if (/^4\.\d+$/.test(version)) {
             link.href = `/${version}/_static/carbon-custom-css/side-nav.css`;
         }
         shadowRoot.appendChild(link);
