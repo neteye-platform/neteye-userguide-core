@@ -5,6 +5,6 @@ FROM docker.io/nginxinc/nginx-unprivileged:alpine@sha256:18d67281256ded39ff65e01
 
 COPY satayo/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
-USER nginx
+USER 101
 
 EXPOSE 8080
