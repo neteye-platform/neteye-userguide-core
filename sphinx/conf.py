@@ -107,6 +107,9 @@ rst_prolog = f"""
 .. |ne| replace:: NetEye
 .. |neb| replace:: **NetEye**
 .. |nei| replace:: `NetEye`
+.. |nec| replace:: NetEye.Cloud
+.. |necb| replace:: **NetEye.Cloud**
+.. |neci| replace:: `NetEye.Cloud`
 .. |tg_deb| replace:: {tg_deb}
 .. |tg_win| replace:: {tg_win}
 .. |tg_rh| replace:: {tg_rh}
