@@ -107,6 +107,6 @@ COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=755 /usr/share/nginx
 # Version-independent static assets (e.g. logos), accessible at /static/img/
 COPY --chown=nginx:nginx --chmod=644 static/img/ /usr/share/nginx/html/static/img/
 
-USER nginx
+USER 101
 
 EXPOSE 8080
