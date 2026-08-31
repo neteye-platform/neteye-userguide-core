@@ -39,6 +39,8 @@ spec:
       value: "{{ target_branch }}"
     - name: projects
       value: "{{ repo_name }}:{{ source_branch }}"
+    - name: sourceGitUrl
+      value: "{{ source_url }}"
     - name: GitOpsBranch
       value: prod
     - name: author
