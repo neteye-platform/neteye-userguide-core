@@ -29,7 +29,8 @@ ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
 
-RUN apk add --no-cache curl=8.20.0-r0 grep=3.12-r0 jq=1.8.1-r0
+# hadolint ignore=DL3018
+RUN apk add --no-cache curl grep jq
 
 COPY ./ $UG_HOME
 
