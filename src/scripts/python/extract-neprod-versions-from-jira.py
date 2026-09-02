@@ -1,9 +1,10 @@
-from jira import JIRA
-from operator import itemgetter
-import natsort
 import argparse
-import urllib3
 import json
+from operator import itemgetter
+
+import natsort
+import urllib3
+from jira import JIRA
 
 urllib3.disable_warnings()
 
