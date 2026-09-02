@@ -21,7 +21,7 @@ ARG IGNORE_WARNINGS
 
 # Use a build container to compile in order to have all required tools
 # but do not bring them in the final image to reduce space usage
-FROM python:3.14.3-alpine3.23@sha256:faee120f7885a06fcc9677922331391fa690d911c020abb9e8025ff3d908e510 AS ug_builder
+FROM python:3.14.7-alpine3.23@sha256:8caa2adfeb414dfe68d8b257f7aea9e205a400521c2b13b2d2e5e731fb8e70e5 AS ug_builder
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG VERSIONS_FILE_PATH
@@ -29,7 +29,8 @@ ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
 
-RUN apk add --no-cache curl=8.20.0-r0 grep=3.12-r0 jq=1.8.1-r0
+# hadolint ignore=DL3018
+RUN apk add --no-cache curl grep jq
 
 COPY ./ $UG_HOME
 
@@ -68,7 +69,7 @@ FROM docker-si.wuerth-phoenix.com/neteye-userguide-unprivileged-prod:latest AS p
 
 ################################################################################
 # Archive old versions of the Userguide
-FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 AS ug_version_archiver
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS ug_version_archiver
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
@@ -84,7 +85,8 @@ COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERS
 # in /usr/share/nginx/html, the other ones we can create a symlink to the
 # /usr/share/nginx/all/
 
-RUN apk add jq=1.8.1-r0 zip=3.0-r13 --no-cache
+# hadolint ignore=DL3018
+RUN apk add --no-cache jq zip
 COPY ./src/scripts/archive_ug_version.sh $UG_HOME/src/scripts/archive_ug_versions.sh
 COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 
@@ -94,7 +96,7 @@ RUN $UG_HOME/src/scripts/archive_ug_versions.sh
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
-FROM nginxinc/nginx-unprivileged:1.28.2-alpine-slim@sha256:47288214e27cc88b5b3c5277f4fcdb58bc29059f86121b59b9c1e1171938216e
+FROM nginxinc/nginx-unprivileged:1.31.4-alpine-slim@sha256:d668aa123a6ec3216ba5ae6b398ae8001d5e81d3142d3659e20354fd0c3c3125
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 

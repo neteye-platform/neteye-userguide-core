@@ -19,8 +19,9 @@ from copy import deepcopy
 from pathlib import Path
 
 from docutils import nodes
-from sphinx import addnodes
 from sphinx.environment.adapters.toctree import TocTree
+
+from sphinx import addnodes
 
 current_year = time.strftime("%Y")
 
@@ -208,7 +209,7 @@ master_doc = "index" if not feature else f"index-{feature}"
 
 # General information about the project.
 project = "NetEye User Guide"
-copyright = "&copy; %s, Würth IT Italy s.r.l." % (current_year)
+copyright = f"&copy; {current_year}, Würth IT Italy s.r.l."
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -278,7 +279,7 @@ html_theme_path = ["./theme"]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "%s" % (project)
+html_title = f"{project}"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 # html_short_title = None
@@ -491,10 +492,7 @@ def toctree_to_json(node, pagename):
             # Process each child of the list item
             for child in node.children:
                 # First paragraph/compact_paragraph is the title+link
-                if isinstance(child, nodes.paragraph) or isinstance(
-                    child,
-                    addnodes.compact_paragraph,
-                ):
+                if isinstance(child, (nodes.paragraph, addnodes.compact_paragraph)):
                     for ref_child in child.children:
                         if isinstance(ref_child, nodes.reference):
                             title = ref_child.astext().strip()
@@ -676,10 +674,9 @@ def get_toc_data(app, pagename, templatename, context, doctree):
             build_active_statuses(menu)
 
             for module in menu["children"]:
-                if "status" in module:
-                    if module["status"] == "active":
-                        local_toc_data = module
-                        parent_loc_data = menu
+                if "status" in module and module["status"] == "active":
+                    local_toc_data = module
+                    parent_loc_data = menu
 
         context["toc_data"] = full_menu
         context["local_toc_data"] = local_toc_data
