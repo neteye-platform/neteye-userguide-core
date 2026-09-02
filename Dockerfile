@@ -85,7 +85,8 @@ COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERS
 # in /usr/share/nginx/html, the other ones we can create a symlink to the
 # /usr/share/nginx/all/
 
-RUN apk add jq=1.8.1-r0 zip=3.0-r13 --no-cache
+# hadolint ignore=DL3018
+RUN apk add --no-cache jq zip
 COPY ./src/scripts/archive_ug_version.sh $UG_HOME/src/scripts/archive_ug_versions.sh
 COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 
