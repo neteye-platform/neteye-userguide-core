@@ -59,6 +59,7 @@ if [ -z "$TARGET_BRANCH" ]; then
 fi
 
 echo "[+] Initializing submodules"
+
 # .gitmodules uses a relative URL for sphinx/source, which git resolves against whatever
 # remote this repo itself was cloned from. When cloned from a fork (a PR against this repo
 # alone, without also forking neteye-userguide-content), that resolves to a submodule repo
