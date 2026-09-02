@@ -84,15 +84,12 @@ if (last10Versions.includes(neteye_version)) {
             loadScript('searchindex.js');
         })
         .then(result => {
-            // Track search event for new search. Initialize _paq if not already done by the other scripts (Async issues)
-            window._paq = window._paq || [];
-            window._paq.push(['trackSiteSearch', query, false, result.length]);
             // Set cookie if everything worked
-            setCookie('neteye_userguide_search_performed', 'true', false);
+            setCookie('neteye_userguide_search_performed', 'true');
         })
         .catch(e => {
             // log error so that a failure does not get unnoticed
-            console.error("Cookie or analytics failure: \n%s", e);
+            console.error("Cookie failure: \n%s", e);
         });
 } else {
     loadScript('searchindex.js');
@@ -101,12 +98,6 @@ if (last10Versions.includes(neteye_version)) {
 
 $(document).ready(function(){
     document.querySelector('.query').textContent += query;
-    let numberOfResults = 0;
-    numberOfResults = document.querySelectorAll("#search-results ul.search li").length;
-    if (numberOfResults !== 0) {
-        // Track search event for legacy search
-        window._paq.push(['trackSiteSearch', query, false, numberOfResults]);
-    }
     $(document).on('click', '.search li', function() {
         const link = $(this).find('a').eq(0);
         if (link.length) {
