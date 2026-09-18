@@ -21,7 +21,7 @@ ARG IGNORE_WARNINGS
 
 # Use a build container to compile in order to have all required tools
 # but do not bring them in the final image to reduce space usage
-FROM python:3.14.7-alpine3.23@sha256:8caa2adfeb414dfe68d8b257f7aea9e205a400521c2b13b2d2e5e731fb8e70e5 AS ug_builder
+FROM python:3.14.7-alpine3.23@sha256:200baf0bf6b7904cf643358326e580ca0b8afec82416fd6d233746ceb215283c AS ug_builder
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG VERSIONS_FILE_PATH
