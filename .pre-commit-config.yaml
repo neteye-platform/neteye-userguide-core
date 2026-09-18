@@ -55,7 +55,7 @@ repos:
       - id: shellcheck
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
+    rev: 2eeb5678de71a00c0902cbda7105d328432f72cb # frozen: v0.16.8
     hooks:
       - id: ruff-check
         args:
@@ -63,7 +63,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: d153933366256874470b9d8395de436c50714f41 # frozen: 0.12.9
+    rev: 17a6b18b8006d390e476d419631aae885cadfa40 # frozen: 0.12.17
     hooks:
       - id: uv-lock
 
