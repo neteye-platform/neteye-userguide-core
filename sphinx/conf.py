@@ -121,6 +121,7 @@ rst_prolog = f"""
 .. |neteye_previous_version_bold| replace:: **{neteye_previous_version}**
 .. |neteye_following_version| replace:: {neteye_following_version}
 .. |neteye_following_version_bold| replace:: **{neteye_following_version}**
+.. |sat| replace:: SATAYO
 .. |satellite_config_file| replace:: :file:`/root/satellite-setup/config/{neteye_version}/satellite-config.tar.gz`
 .. |support| replace:: support portal
 .. _support: https://servicedesk.wuerth-it.it/
