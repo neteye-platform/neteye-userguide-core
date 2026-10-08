@@ -65,7 +65,7 @@ RUN $UG_HOME/src/scripts/create_nginx_rules.sh "$UG_HOME/versions.json"
 # Is initially created using Dockerfile.migration (which converts legacy centos7 image to unprivileged image)
 # and then this image is periodically updated in order to cache unchanged UG versions.
 # hadolint ignore=DL3007
-FROM docker-si.wuerth-phoenix.com/neteye-userguide-unprivileged-prod:latest AS previous_ug
+FROM ghcr.io/witglobal/neteye-userguide:latest AS previous_ug
 
 ################################################################################
 # Archive old versions of the Userguide
