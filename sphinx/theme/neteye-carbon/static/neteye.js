@@ -80,19 +80,16 @@
 // modify this previous line to pass in your own method name
 // and object for the method to be attached to
 
-function setCookie(cookieName, cookieValue, consensusRequired) {
-    if (!consensusRequired || Cookies.get('user-accepts-cookies') === 'true') {
-        Cookies.set(cookieName, cookieValue, {
-            expires: 365,
-            sameSite: 'strict'
-        });
-    }
+function setCookie(cookieName, cookieValue) {
+    Cookies.set(cookieName, cookieValue, {
+        expires: 365,
+        sameSite: 'strict'
+    });
 }
 
 /* Neteye JS entry point */
 (function () {
     docReady(() => {
-        initTracking();
         initCookie();
         initCodeHighlights();
         initUserGuideTheme();
@@ -133,31 +130,6 @@ function setCookie(cookieName, cookieValue, consensusRequired) {
         }, 1000);
     }
 
-    function initTracking() {
-        var _paq = window._paq = window._paq || [];
-        _paq.push(['requireConsent']);
-        _paq.push(['requireCookieConsent']);
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        // Modify the visitor cookie timeout to less than a year. Default is 13 months.
-        _paq.push(['setVisitorCookieTimeout', '31449600']);
-        (function () {
-            var u = "https://analytics.neteye.cloud/";
-            _paq.push(['setTrackerUrl', u + 'matomo.php']);
-            _paq.push(['setSiteId', '1']);
-            var d = document, g = d.createElement('script'),
-                s = d.getElementsByTagName('script')[0];
-            g.async = true;
-            g.src = u + 'matomo.js';
-            s.parentNode.insertBefore(g, s);
-        })();
-    }
-
-    function consentTracking() {
-        window._paq.push(['setConsentGiven']);
-        window._paq.push(['setCookieConsentGiven']);
-    }
-
     function initCookie() {
         if (Cookies.get('user-accepts-cookies') !== 'true') {
             $('#cookie-banner').show();
@@ -165,15 +137,12 @@ function setCookie(cookieName, cookieValue, consensusRequired) {
                 $('#cookie-banner').hide();
             });
             $('#cookie-banner .btn-accept-cookie').on('click', function () {
-                consentTracking();
                 Cookies.set('user-accepts-cookies', true, {
                     expires: 365,
                     sameSite: 'strict'
                 });
                 $('#cookie-banner').hide();
             });
-        } else {
-            consentTracking();
         }
     }
 
@@ -229,7 +198,7 @@ function setCookie(cookieName, cookieValue, consensusRequired) {
 
         document.querySelector('#topbar #switch-theme').addEventListener("click", () => {
             const useDarkTheme = (Cookies.get(darkThemeCookieName) === "true");
-            setCookie(darkThemeCookieName, !useDarkTheme, false);
+            setCookie(darkThemeCookieName, !useDarkTheme);
             [...Object.entries(darkTheme), ...Object.entries(lightTheme)].forEach(
                 ([selector, classNames]) =>
                     classNames.forEach(
