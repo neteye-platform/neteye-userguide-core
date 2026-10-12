@@ -136,6 +136,15 @@ body.dark-theme #switch-theme #switch-dark-mode {
     }
 }
 
+/* With the hamburger button (3rem) in front, keep the search button starting at --side-nav-width,
+   where the side menu's border is */
+@media (min-width: 672px) and (max-width: 1055px) {
+    #topbar .header-name::part(link) {
+        width: calc(var(--side-nav-width) - 3rem);
+        padding-right: 1rem;
+    }
+}
+
 @media (max-width: 671px) {
     #topbar .neteye-logo.desktop-version {
         display: none;
