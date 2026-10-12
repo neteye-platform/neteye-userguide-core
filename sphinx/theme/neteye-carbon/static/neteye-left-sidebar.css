@@ -59,7 +59,9 @@ body.dark-theme {
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  /* the container is --side-nav-width + 1px (the menu's right border); the bottom line ends where
+     that border starts and follows the container's width while the module list slides */
+  width: calc(100% - 1px);
 }
 
 .side-navigation-panel .summon-parent-menu span,
@@ -227,7 +229,13 @@ body.dark-theme {
   .side-menu-general {
     transform: translateX(0%);
     padding-top: 1rem !important;
-    /* right border starts exactly at --side-nav-width, like the desktop menus (see .side-menu-local) */
+  }
+}
+
+/* Same range as the fixed-width top-bar logo area (neteye-topbar.css): the right border starts
+   exactly at --side-nav-width, where the search button starts (see .side-menu-local) */
+@media (min-width: 672px) and (max-width: 1055px) {
+  .side-menu-general {
     box-sizing: content-box;
     height: auto;
     min-height: 0;
