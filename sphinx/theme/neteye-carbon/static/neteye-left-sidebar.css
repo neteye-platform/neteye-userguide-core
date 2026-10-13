@@ -142,8 +142,10 @@ body.dark-theme {
   display: none;
 }
 
-.hide-sidebar {
-  display: none !important;
+@media (min-width: 66rem) {
+  .hide-sidebar {
+    display: none !important;
+  }
 }
 
 .hide-sidebar ~ .grid--max-width {
