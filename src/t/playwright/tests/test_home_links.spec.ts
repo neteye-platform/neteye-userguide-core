@@ -27,7 +27,7 @@ test('Test links in the home page', async ({ page, baseURL }) => {
     const links = await page.locator('.index-section .tile-container cds-clickable-tile').all();
     for (const link of links) {
         await link.click();
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('networkidle');
 
         // check if we are not been redirected to 404.html
         await expect(page.url()).not.toContain('404.html');
