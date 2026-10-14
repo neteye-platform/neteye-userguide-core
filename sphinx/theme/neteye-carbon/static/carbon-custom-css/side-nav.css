@@ -2,6 +2,8 @@
     inline-size: calc(var(--side-nav-width) + 1px) !important;
     max-inline-size: calc(var(--side-nav-width) + 1px) !important;
     transition: all cubic-bezier(0, .3, .06, 1.02) 500ms;
+    /* the menus paint the background; avoids a sub-pixel sliver next to their borders when zoomed */
+    background: transparent;
 }
 
 .cds--side-nav.cds--side-nav--ux.loaded {
@@ -9,8 +11,8 @@
 }
 
 .cds--side-nav.cds--side-nav--ux.show-parent-menu {
-    inline-size: calc(2 * var(--side-nav-width)) !important;
-    max-inline-size: calc(2 * var(--side-nav-width)) !important;
+    inline-size: calc(2 * var(--side-nav-width) + 2px) !important;
+    max-inline-size: calc(2 * var(--side-nav-width) + 2px) !important;
     transition: all cubic-bezier(0, .3, .06, 1.02) 500ms;
 }
 
