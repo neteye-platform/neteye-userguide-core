@@ -109,12 +109,13 @@ body.dark-theme {
   padding-top: 0;
   border-inline: 1px solid var(--subtle-lines-color);
   background: var(--cds-layer-02);
-  min-height: 100%;
   width: var(--side-nav-width);
+  top: 0;
+  bottom: 0;
   right: 0;
   position: absolute;
   z-index: 10;
-  overflow: visible;
+  overflow-y: auto;
 }
 
 .module-header {

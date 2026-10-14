@@ -78,11 +78,12 @@
                         {% if valid_level0_children %}
                             <cds-side-nav-menu
                                 class="side-menu-lvl0 {% if level0.status == 'active' %}expanded{% endif %}"
-                                title="{{ level0.title }}" {% if level0.status == 'active' %}active expanded{% endif %}
+                                title="{{ level0.title|e }}" {% if level0.status == 'active' %}active expanded{% endif %}
                             >
                                 {% for level1 in valid_level0_children %}
                                     <cds-side-nav-menu-item
                                         class="side-menu-lvl1"
+                                        title="{{ level1.title|e }}"
                                         href="{{ level1.href }}" {% if level1.status == 'active' %}active{% endif %}
                                     >
                                         {{ level1.title }}
@@ -92,6 +93,7 @@
                         {% elif '#' not in level0.href %}
                             <cds-side-nav-menu-item
                                 class="side-menu-lvl0"
+                                title="{{ level0.title|e }}"
                                 href="{{ level0.href }}" {% if level0.status == 'active' %}active{% endif %}
                             >
                                 {{ level0.title }}
@@ -125,6 +127,7 @@
                     {% endif %}
 
                     <cds-side-nav-link
+                        title="{{ level0.title|e }}"
                         href="{{ href }}"
                         class="side-menu-lvl0" {% if level0.status == 'active' %}active{% endif %}
                     >
@@ -147,14 +150,14 @@
                 {% for level0 in complete_menu %}
                     {% if level0.children %}
                         <cds-side-nav-menu
-                            title="{{ level0.title }}"
+                            title="{{ level0.title|e }}"
                             class="side-menu-lvl0" {% if level0.status == 'active' %}active expanded{% endif %}
                         >
                             {% for level1 in level0.children %}
                                 {% if level1.children %}
                                     <cds-side-nav-menu
                                         class="side-menu-lvl1 {% if level1.status == 'active' %}side-menu-lvl1--expanded{% endif %}"
-                                        title="{{ level1.title }}"
+                                        title="{{ level1.title|e }}"
                                         {% if level1.status == 'active' %} active expanded{% endif %}
                                     >
                                         {% for level2 in level1.children if '#' not in level2.href %}
@@ -167,12 +170,13 @@
                                             {% if valid_level2_children %}
                                                 <cds-side-nav-menu
                                                     class="side-menu-lvl2 {% if level2.status == 'active' %}side-menu-lvl2--expanded{% endif %}"
-                                                    title="{{ level2.title }}" {% if level2.status == 'active' %} active expanded {% endif %}
+                                                    title="{{ level2.title|e }}" {% if level2.status == 'active' %} active expanded {% endif %}
                                                 >
                                                     {% for level3 in level2.children if '#' not in level3.href %}
 
                                                         <cds-side-nav-menu-item
                                                             class="side-menu-lvl3"
+                                                            title="{{ level3.title|e }}"
                                                             href="{{ level3.href }}" {% if level3.status == 'active' %} active{% endif %}>
                                                         {{ level3.title }}
                                                         </cds-side-nav-menu-item>
@@ -181,6 +185,7 @@
                                             {% else %}
                                                 <cds-side-nav-menu-item
                                                     class="side-menu-lvl2 {% if level2.status == 'active' %}side-menu-lvl2--expanded{% endif %}"
+                                                    title="{{ level2.title|e }}"
                                                     href="{{ level2.href }}" {% if level2.status == 'active' %} active{% endif %}
                                                 >
                                                     {{ level2.title }}
@@ -191,6 +196,7 @@
                                 {% else %}
                                     <cds-side-nav-menu-item
                                         class="side-menu-lvl1"
+                                        title="{{ level1.title|e }}"
                                         href="{{ level1.href }}" {% if level1.status == 'active' %} active{% endif %}
                                     >
                                         {{ level1.title }}
@@ -201,9 +207,10 @@
                     {% else %}
                         <cds-side-nav-menu-item
                             href="{{ level0.href }}"
+                            title="{{ level0.title|e }}"
                             class="side-menu-lvl0" {% if level0.status == 'active' %}side-menu-lvl0--active{% endif %}
                         >
-                            {{ item.title }}
+                            {{ level0.title }}
                         </cds-side-nav-menu-item>
                     {% endif %}
                 {% endfor %}
