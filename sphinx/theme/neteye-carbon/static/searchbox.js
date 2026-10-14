@@ -4,7 +4,7 @@ window.addEventListener("load", () => {
     const inputText = searchElement?.shadowRoot.querySelector('#input');
 
     if(!inputText) {
-        return
+        return;
     }
 
     inputText.addEventListener('keydown', (event) => {

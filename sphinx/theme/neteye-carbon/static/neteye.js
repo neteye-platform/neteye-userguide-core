@@ -224,25 +224,6 @@ function setCookie(cookieName, cookieValue) {
         }
     }
 
-    function extractBadgeContentFromMap(jsonMap) {
-        var url = window.location.pathname;
-        urlParts = url.split('/');
-
-        /* Remove first part ("userguide" for local instance or "4.17" for online) */
-        if (urlParts.length > 1) {
-            urlParts.splice(1, 1);
-            url = urlParts.join('/');
-        }
-
-        for (const property in jsonMap) {
-            if (jsonMap[property].includes(url)) {
-                return property;
-            }
-        }
-
-        return false;
-    }
-
     function AddVersionDirectiveTags() {
         addVersionDirectiveTagsForNew();
         addVersionDirectiveTagsForChanged();
@@ -269,23 +250,39 @@ function setCookie(cookieName, cookieValue) {
             return;
         }
 
-        const regex = /^(New|Changed|Deprecated)\s.*version\s([\d+.\d+].*):/gm;
-        let string = versionModifiedEle.text();
-        let match;
-        let modifiedDom;
+        const regex = /^(New|Changed|Deprecated)\s.*version\s([\d.].*):/gm;
 
-        while ((match = regex.exec(string)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (match.index === regex.lastIndex) {
-                regex.lastIndex++;
+        versionModifiedEle.each(function () {
+            const text = this.textContent;
+            const fragment = document.createDocumentFragment();
+            let lastIndex = 0;
+            let match;
+
+            regex.lastIndex = 0;
+            while ((match = regex.exec(text)) !== null) {
+                // This is necessary to avoid infinite loops with zero-width matches
+                if (match.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                fragment.append(text.slice(lastIndex, match.index));
+
+                const typeSpan = document.createElement('span');
+                typeSpan.className = 'versionmodified-type';
+                typeSpan.textContent = match[1];
+
+                const versionSpan = document.createElement('span');
+                versionSpan.className = 'version-' + match[1].toLowerCase();
+                versionSpan.textContent = match[2];
+
+                fragment.append(typeSpan, versionSpan);
+                lastIndex = match.index + match[0].length;
             }
-            modifiedDom = '<span class="versionmodified-type">' + match[1] + '</span>' +
-                '<span class="version-' + match[1].toLowerCase() + '">' + match[2] + '</span>';
-        }
 
-        if (modifiedDom) {
-            versionModifiedEle.html(versionModifiedEle.text().replace(regex, modifiedDom));
-        }
+            if (lastIndex > 0) {
+                fragment.append(text.slice(lastIndex));
+                this.replaceChildren(fragment);
+            }
+        });
     }
 
     function initFigureModals() {
