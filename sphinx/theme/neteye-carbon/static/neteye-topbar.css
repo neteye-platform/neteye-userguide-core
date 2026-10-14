@@ -58,6 +58,10 @@
 #topbar .header-menu::part(menu-body) {
     min-inline-size: 12.5rem;
     inline-size: 100%;
+    max-block-size: calc(100vh - var(--cds-spacing-09));
+    max-block-size: calc(100dvh - var(--cds-spacing-09));
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 #topbar #change-version.header-menu::part(menu-body) {
