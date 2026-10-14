@@ -59,7 +59,9 @@ body.dark-theme {
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  /* the container is --side-nav-width + 1px (the menu's right border); the bottom line ends where
+     that border starts and follows the container's width while the module list slides */
+  width: calc(100% - 1px);
 }
 
 .side-navigation-panel .summon-parent-menu span,
@@ -103,19 +105,32 @@ body.dark-theme {
   transition: all cubic-bezier(0, 0.3, 0.06, 1.02) 500ms;
   background: var(--cds-layer-01);
   z-index: 9;
+  border-right: 0; /* the section menu's left border is the divider */
 }
 
+/* Divider lines are borders that start exactly at x = --side-nav-width (where the top-bar search
+   button starts): Firefox rounds borders to whole device pixels at fractional zoom, so only a
+   border's starting edge is reliable. Hence this menu is positioned by its left edge, with its
+   right border as divider when alone and its left border as divider next to the module list. */
 .side-menu-local {
   padding-top: 0;
-  border-inline: 1px solid var(--subtle-lines-color);
+  border-left: 0 solid var(--subtle-lines-color);
+  border-right: 1px solid var(--subtle-lines-color);
   background: var(--cds-layer-02);
+  box-sizing: content-box;
   width: var(--side-nav-width);
   top: 0;
   bottom: 0;
-  right: 0;
+  left: 0;
   position: absolute;
   z-index: 10;
   overflow-y: auto;
+  transition: left cubic-bezier(0, 0.3, 0.06, 1.02) 500ms;
+}
+
+:root.show-parent-menu .side-menu-local {
+  left: var(--side-nav-width);
+  border-left-width: 1px;
 }
 
 .module-header {
@@ -217,6 +232,17 @@ body.dark-theme {
   }
 }
 
+/* Same range as the fixed-width top-bar logo area (neteye-topbar.css): the right border starts
+   exactly at --side-nav-width, where the search button starts (see .side-menu-local) */
+@media (min-width: 672px) and (max-width: 1055px) {
+  .side-menu-general {
+    box-sizing: content-box;
+    height: auto;
+    min-height: 0;
+    bottom: 0;
+  }
+}
+
 .fake-dropdown::part(expando) {
   display: none !important;
 }
@@ -262,12 +288,31 @@ body.dark-theme {
     left: -0.2rem;
   }
 
+  /* Scrollbars start below the top bar:
+     - section menu: still reaches the top (its border and background stay one continuous box at
+       any zoom level), but scrolls inside its menu body, which starts below the bar
+     - module list (slides in): starts below the bar; an upward box-shadow paints its colour behind
+       the bar and moves with it (its own border is always covered by the section menu) */
   .side-menu-local {
+    display: flex;
+    flex-direction: column;
     padding-top: 3.125rem;
+    overflow: hidden;
+  }
+
+  .side-menu-local::part(menu-body) {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .side-menu-parent {
-    padding-top: 5.125rem;
+    top: 3.125rem;
+    bottom: 0;
+    height: auto;
+    min-height: 0;
+    padding-top: 2rem;
+    box-shadow: 0 -3.125rem 0 var(--cds-layer-01);
   }
 
   [data-page="index"] .side-navigation-panel {
