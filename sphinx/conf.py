@@ -194,7 +194,7 @@ copybutton_prompt_is_regexp = True
 # https://github.com/executablebooks/sphinx-copybutton/issues/96.
 
 copybutton_prompt_text = (
-    r"neteye#\s|sat#\s|cluster#\s|cluster-node.+#\s|elastic-only#\s|voting-only#\s|#\s"
+    r"neteye#\s|sat#\s|cluster#\s|cluster-node.+#\s|elastic-only#\s|voting-only#\s|#\s|C:\\[^>]*>\s"
 )
 
 #####

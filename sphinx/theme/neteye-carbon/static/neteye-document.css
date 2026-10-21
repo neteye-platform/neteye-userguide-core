@@ -529,11 +529,12 @@ p.rubric {
     position: relative;
     margin-left: calc(-1 * var(--cds-spacing-05));
 }
+.highlight .gp { color: var(--codeblock-light-handle); }
+body.dark-theme .highlight .gp { color: var(--codeblock-dark-handle); }
 .body .highlight pre {
     padding: var(--cds-spacing-03) 0;
-    align-items: center;
     background-color: transparent;
-    color: var(--primary-color-light);
+    color: var(--codeblock-light-content);
     font-family: var(--cds-code-02-font-family);
     font-size: var(--cds-code-02-font-size);
     font-weight: var(--cds-code-02-font-weight);
@@ -542,6 +543,15 @@ p.rubric {
     margin: 0 var(--cds-spacing-07) 0 0;
     overflow: auto;
 }
+body.dark-theme .highlight pre { color: var(--codeblock-dark-content); }
+
+.highlight .c1 { color: var(--codeblock-light-content); }
+.body .highlight pre .n { color: var(--codeblock-light-handle); }
+.body .highlight pre .m { color: var(--codeblock-light-content); }
+body.dark-theme .highlight .c1 { color: var(--codeblock-dark-content); }
+body.dark-theme .body .highlight pre .n { color: var(--codeblock-dark-handle); }
+body.dark-theme .body .highlight pre .m { color: var(--codeblock-dark-content); }
+
 /* Styling for the copy button */
 .highlight button.copybtn,
 .highlight:hover button.copybtn,
