@@ -91,6 +91,8 @@ tg_linux = (
 rst_prolog = f"""
 .. |chevron| image:: /icons/chevron.ico
    :width: 12px
+.. |menu| image:: /icons/menu.ico
+   :width: 12px
 .. |reload| image:: /icons/reload.ico
    :width: 12px
 .. |edit| image:: /icons/edit.ico
