@@ -106,7 +106,7 @@ rst_prolog = f"""
 .. |gear| image:: /icons/gear.ico
    :width: 8px
 .. role:: phone
-.. |witit| replace:: Würth IT Italy
+.. |witit| replace:: Würth IT
 .. |ne| replace:: NetEye
 .. |neb| replace:: **NetEye**
 .. |nei| replace:: `NetEye`
@@ -124,8 +124,9 @@ rst_prolog = f"""
 .. |neteye_following_version| replace:: {neteye_following_version}
 .. |neteye_following_version_bold| replace:: **{neteye_following_version}**
 .. |sat| replace:: SATAYO
+.. |aly| replace:: Alyvix
 .. |satellite_config_file| replace:: :file:`/root/satellite-setup/config/{neteye_version}/satellite-config.tar.gz`
-.. |support| replace:: support portal
+.. |support| replace:: the Support portal
 .. _support: https://servicedesk.wuerth-it.it/
 .. |current_year| replace:: {current_year}
 """
