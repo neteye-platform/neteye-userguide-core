@@ -1,5 +1,5 @@
 /*
- * Christmas hockey easter egg: Santa Clauses vs Grinches, refereed by a red panda.
+ * Christmas hockey easter egg: Santa Clauses vs Humbugs, refereed by a red panda.
  *
  * The present icon in the top bar (#xmas-game) is only revealed during the
  * Christmas season (1 Dec - 6 Jan). Add ?xmas to the URL to force it on.
@@ -57,8 +57,8 @@
     const NET_MOUTH = 74, NET_DEPTH = 26;
     const SKATER_R = 16, PUCK_R = 6;
     const GAME_SECONDS = 180;
-    const SANTA = 0, GRINCH = 1;
-    const TEAM_NAMES = ["Santa Clauses", "Grinches"];
+    const SANTA = 0, HUMBUG = 1;
+    const TEAM_NAMES = ["Santa Clauses", "Humbugs"];
 
     const COLORS = {
         ice: "#f4f9ff",
@@ -69,9 +69,9 @@
         santa: "#da1e28",
         santaDark: "#a2191f",
         skin: "#ffd8bd",
-        grinch: "#4f9d1d",
-        grinchFace: "#9bd33b",
-        grinchJersey: "#0e6027",
+        humbug: "#4f9d1d",
+        humbugFace: "#9bd33b",
+        humbugJersey: "#0e6027",
         panda: "#c4501a",
         pandaDark: "#5a2410",
         stick: "#8a5a2b",
@@ -104,13 +104,13 @@
         overlay.innerHTML = `
             <div class="xh-panel">
                 <div class="xh-header">
-                    <span class="xh-title">&#127877; Santa Clauses vs Grinches &#127954;</span>
+                    <span class="xh-title">&#127877; Santa Clauses vs Humbugs &#127954;</span>
                     <button type="button" class="xh-close" aria-label="Close game">&times;</button>
                 </div>
                 <div class="xh-hud" aria-live="polite">
                     <div class="xh-team santa"><span>Santa Clauses</span><b data-score="0">0</b></div>
                     <div class="xh-clock">3:00</div>
-                    <div class="xh-team grinch"><b data-score="1">0</b><span>Grinches</span></div>
+                    <div class="xh-team humbug"><b data-score="1">0</b><span>Humbugs</span></div>
                 </div>
                 <div class="xh-stage">
                     <canvas aria-label="Hockey rink"></canvas>
@@ -182,7 +182,7 @@
             return members;
         }
 
-        skaters.push(...makeTeam(SANTA), ...makeTeam(GRINCH));
+        skaters.push(...makeTeam(SANTA), ...makeTeam(HUMBUG));
 
         function faceoffSpot(s) {
             const d = attackDir(s.team);
@@ -270,8 +270,8 @@
             state = "title";
             resetPositions(true);
             showScreen(
-                "Santa Clauses vs Grinches",
-                "The Grinches want to steal Christmas &mdash; beat them on the ice! " +
+                "Santa Clauses vs Humbugs",
+                "The Humbugs think Christmas is overrated &mdash; show them some holiday spirit on the ice! " +
                 "You control the Santa with the yellow ring. " +
                 "Our head referee, the red panda, drops the puck. 3 minutes, sudden death if tied.",
                 "Play",
@@ -302,8 +302,8 @@
                 text = `The Santa Clauses win ${s}&ndash;${g}. The red panda approves.`;
                 burstConfetti(W / 2, H / 2, 160);
             } else {
-                title = "The Grinches stole Christmas…";
-                text = `Grinches win ${g}&ndash;${s}. Try again before the 25th!`;
+                title = "Bah, humbug! The Humbugs win";
+                text = `They beat the Santa Clauses ${g}&ndash;${s}. Lace up your skates and try again before the 25th!`;
             }
             showScreen(title, text, "Play again", newGame);
         }
@@ -656,7 +656,7 @@
             }
             if (s.team === SANTA && !s.goalie) {
                 controlled = s;
-            } else if (s.team === GRINCH && controlled) {
+            } else if (s.team === HUMBUG && controlled) {
                 // Auto-switch to the Santa closest to the puck when defending
                 const closest = skaters
                     .filter(m => m.team === SANTA && !m.goalie)
@@ -735,7 +735,7 @@
                         pokeCheck(s);
                     }
                 }
-                return {x: target.x, y: target.y, speed: s.team === GRINCH ? 215 : 205};
+                return {x: target.x, y: target.y, speed: s.team === HUMBUG ? 215 : 205};
             }
 
             // Defend: sit between the puck and our own net
@@ -851,7 +851,7 @@
 
             collideBoards(s, SKATER_R, 0.2);
             collideNet(s, SKATER_R, SANTA, false, 0.2);
-            collideNet(s, SKATER_R, GRINCH, false, 0.2);
+            collideNet(s, SKATER_R, HUMBUG, false, 0.2);
         }
 
         function separateSkaters() {
@@ -906,7 +906,7 @@
                 const impact = collideBoards(puck, PUCK_R, 0.75);
                 if (impact > 200) sfx.board();
                 collideNet(puck, PUCK_R, SANTA, true, 0.5);
-                collideNet(puck, PUCK_R, GRINCH, true, 0.5);
+                collideNet(puck, PUCK_R, HUMBUG, true, 0.5);
             }
             const friction = Math.pow(0.6, dt);
             puck.vx *= friction;
@@ -969,10 +969,10 @@
             const inMouth = puck.y > H / 2 - NET_MOUTH / 2 && puck.y < H / 2 + NET_MOUTH / 2;
             if (!inMouth || state !== "play") return false;
             if (prevX >= goalX(SANTA) && puck.x < goalX(SANTA)) {
-                goalScored(GRINCH);
+                goalScored(HUMBUG);
                 return true;
             }
-            if (prevX <= goalX(GRINCH) && puck.x > goalX(GRINCH)) {
+            if (prevX <= goalX(HUMBUG) && puck.x > goalX(HUMBUG)) {
                 goalScored(SANTA);
                 return true;
             }
@@ -993,10 +993,10 @@
             sfx.horn();
             if (team === SANTA) {
                 setTimeout(sfx.jingle, 600);
-                burstConfetti(goalX(GRINCH), H / 2, 90);
+                burstConfetti(goalX(HUMBUG), H / 2, 90);
                 banner = {text: "HO HO HO! GOAL!", t: 2.4, color: COLORS.red};
             } else {
-                banner = {text: "Grinch goal… bah humbug", t: 2.4, color: COLORS.grinch};
+                banner = {text: "Humbug goal… bah!", t: 2.4, color: COLORS.humbug};
             }
             say("GOAL!", 2);
         }
@@ -1221,7 +1221,7 @@
             c.textBaseline = "middle";
             c.fillStyle = COLORS.santa;
             c.fillText("HO HO HO", W / 2 - 300, H / 2);
-            c.fillStyle = COLORS.grinch;
+            c.fillStyle = COLORS.humbug;
             c.fillText("BAH HUMBUG", W / 2 + 300, H / 2);
             c.globalAlpha = 1;
             c.restore();
@@ -1396,17 +1396,17 @@
             }
         }
 
-        function drawGrinch(c, s) {
+        function drawHumbug(c, s) {
             const {x, y} = s;
             const r = s.goalie ? SKATER_R + 3 : SKATER_R;
-            c.fillStyle = COLORS.grinchJersey;
+            c.fillStyle = COLORS.humbugJersey;
             c.beginPath();
             c.arc(x, y + 3, r, 0, Math.PI * 2);
             c.fill();
             c.fillStyle = "#f1c21b";
             c.fillRect(x - r * 0.9, y + 8, r * 1.8, 3);
             // furry head
-            c.fillStyle = COLORS.grinchFace;
+            c.fillStyle = COLORS.humbugFace;
             c.beginPath();
             for (let i = 0; i < 12; i++) {
                 const a = (i / 12) * Math.PI * 2;
@@ -1590,7 +1590,7 @@
 
             drawRink(ctx);
             drawNet(ctx, SANTA);
-            drawNet(ctx, GRINCH);
+            drawNet(ctx, HUMBUG);
 
             // Controlled player marker under the feet
             if (controlled && state !== "title") {
@@ -1607,7 +1607,7 @@
             for (const s of sorted) {
                 drawStick(ctx, s);
                 if (s.team === SANTA) drawSanta(ctx, s);
-                else drawGrinch(ctx, s);
+                else drawHumbug(ctx, s);
             }
             if (puck.owner) drawPuck(ctx);
             drawReferee(ctx);
