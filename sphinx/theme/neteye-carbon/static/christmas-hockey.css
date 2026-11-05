@@ -1,0 +1,212 @@
+/* Christmas hockey easter egg - loaded on demand by christmas-hockey.js */
+
+.xh-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(8, 18, 38, 0.82);
+    backdrop-filter: blur(3px);
+    font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.xh-overlay[hidden] {
+    display: none;
+}
+
+.xh-panel {
+    position: relative;
+    width: min(100%, 1100px);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem 1rem;
+    background: #161616;
+    color: #f4f4f4;
+    border-top: 4px solid #da1e28;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.6);
+}
+
+.xh-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.xh-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.xh-close,
+.xh-btn {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+}
+
+.xh-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: transparent;
+    color: #f4f4f4;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.xh-close:hover,
+.xh-close:focus-visible {
+    background: #393939;
+    outline: none;
+}
+
+.xh-hud {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+}
+
+.xh-team {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.xh-team b {
+    font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 1.5ch;
+    text-align: center;
+}
+
+.xh-team.santa b { color: #ff8389; }
+.xh-team.humbug { justify-content: flex-end; }
+.xh-team.humbug b { color: #6fdc8c; }
+
+.xh-clock {
+    padding: 0.25rem 0.75rem;
+    background: #262626;
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+.xh-stage {
+    position: relative;
+    /* keep the 1040x540 rink ratio and fit both viewport width and height */
+    width: min(100%, calc((100vh - 13rem) * 1040 / 540));
+    aspect-ratio: 1040 / 540;
+    margin: 0 auto;
+}
+
+.xh-stage canvas {
+    display: block;
+    outline: none;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+.xh-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    background: rgba(22, 22, 22, 0.78);
+}
+
+.xh-screen[hidden] {
+    display: none;
+}
+
+.xh-screen h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 3.5vw, 2.25rem);
+    font-weight: 600;
+    color: #fff;
+}
+
+.xh-screen p {
+    margin: 0;
+    max-width: 40rem;
+    color: #c6c6c6;
+    line-height: 1.5;
+}
+
+.xh-btn {
+    min-height: 3rem;
+    padding: 0 2rem;
+    background: #da1e28;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.xh-btn:hover,
+.xh-btn:focus-visible {
+    background: #b81922;
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+}
+
+.xh-help {
+    font-size: 0.8125rem;
+    color: #a8a8a8;
+    text-align: center;
+}
+
+.xh-help kbd {
+    display: inline-block;
+    padding: 0 0.3rem;
+    border: 1px solid #525252;
+    background: #262626;
+    color: #f4f4f4;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+}
+
+.xh-touch {
+    display: none;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.xh-touch .xh-btn {
+    flex: 1;
+    padding: 0 0.5rem;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.xh-touch .xh-btn.secondary {
+    background: #393939;
+}
+
+.xh-overlay.is-touch .xh-touch {
+    display: flex;
+}
+
+.xh-overlay.is-touch .xh-help {
+    display: none;
+}
+
+@media (max-width: 671px) {
+    .xh-overlay { padding: 0; }
+    .xh-panel { padding: 0.5rem; }
+    .xh-team span { display: none; }
+    .xh-title { font-size: 1rem; }
+}
