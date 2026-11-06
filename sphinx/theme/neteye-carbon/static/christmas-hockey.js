@@ -58,7 +58,8 @@
     const SKATER_R = 16, PUCK_R = 6;
     const GOALIE_REACH = 12;                  // pads and glove beyond the goalie body
     const GAME_SECONDS = 180;
-    const PENALTY_SECONDS = 15, FIGHT_SECONDS = 2.6;
+    const PENALTY_SECONDS = 15, FIGHT_SECONDS = 2.6, BRAWL_SECONDS = 4.5;
+    const CREASE_R = 48;                      // the goalie's blue half-circle
     const RISKY_CHECK = 0.6;                  // body checks harder than this can draw a foul or a fight
     const SANTA = 0, HUMBUG = 1;
     const TEAM_NAMES = ["Santa Clauses", "Humbugs"];
@@ -151,7 +152,8 @@
         let muted = false;
         let audio = null;
 
-        let state = "title";       // title | faceoff | play | goal | paused | over
+        let state = "title";       // title | faceoff | play | goal | brawl | paused | over
+        let brawl = null;          // {x, y, by, noise} while everybody is fighting
         let pausedFrom = null;
         let stateTimer = 0;
         let clock = GAME_SECONDS;
@@ -187,7 +189,7 @@
                     cooldown: 0, stealT: 0, holdT: 0, decideT: rand(0, 1),
                     // sprint / body check: boost time, power and direction, then the aftermath
                     boostT: 0, boostP: 0, bx: 0, by: 0, hitDone: false, sprintCd: 0, checkTimer: rand(0, 1),
-                    stunT: 0, fightT: 0, boxT: 0,
+                    stunT: 0, fightT: 0, boxT: 0, shoveCd: 0,
                 });
             }
             return members;
@@ -235,7 +237,8 @@
             charging = false;
             resetPositions(false);
             puck.x = -1000;            // puck is in the referee's paw until the drop
-            controlled = skaters.find(s => s.team === SANTA && s.role === 0);
+            controlled = skaters.find(s => s.team === SANTA && s.role === 0) || null;
+            if (!controlled) pickControlled();     // the centre is in the penalty box
             say("Faceoff!", 1.4);
         }
 
@@ -289,7 +292,7 @@
                 "The Humbugs think Christmas is overrated &mdash; show them some holiday spirit on the ice! " +
                 "You control the Santa with the yellow ring. " +
                 "Without the puck, hold Space to sprint into a Humbug &mdash; but check too hard and you " +
-                "risk the penalty box or a brawl. " +
+                "risk the penalty box or a brawl. And never, ever charge a goalie. " +
                 "Our head referee, the red panda, drops the puck. 3 minutes, sudden death if tied.",
                 "Play",
                 newGame,
@@ -581,6 +584,9 @@
             if (state === "faceoff") {
                 tx = W / 2;
                 ty = H / 2 - 40;
+            } else if (state === "brawl" && brawl) {
+                tx = brawl.x;
+                ty = brawl.y > H / 2 ? brawl.y - 115 : brawl.y + 115;   // keep clear of the big cloud
             } else if (state === "goal" && lastScorer !== null) {
                 const gx = goalX(1 - lastScorer);
                 tx = gx + attackDir(1 - lastScorer) * 80;
@@ -690,7 +696,8 @@
             const tx = target.x + target.vx * lead, ty = target.y + target.vy * lead;
             const d = Math.hypot(tx - s.x, ty - s.y);
             s.a = Math.atan2(ty - s.y, tx - s.x);
-            releasePuck(s, s.a, clamp(d * 1.4 + 180, 320, 720));
+            // With the puck's friction this arrives at ~180 whatever the distance
+            releasePuck(s, s.a, clamp(d * 1.4 + 180, 320, 900));
             sfx.pass();
         }
 
@@ -752,13 +759,18 @@
             sfx.sprint();
         }
 
-        // A sprinting player who runs into an opponent pushes them away
+        // A sprinting player who runs into an opponent pushes them away; running into a goalie
+        // starts a brawl of the whole game
         function checkHits() {
             for (const s of skaters) {
                 if (s.boostT <= 0 || s.hitDone) continue;
                 for (const o of skaters) {
-                    if (o.team === s.team || o.goalie || o.fightT > 0) continue;
-                    if (dist(s, o) < SKATER_R * 2 + 4) {
+                    if (o.team === s.team || o.fightT > 0) continue;
+                    if (dist(s, o) < SKATER_R * 2 + (o.goalie ? 7 : 4)) {
+                        if (o.goalie) {
+                            startBrawl(s, o);
+                            return;
+                        }
                         bodyCheck(s, o);
                         break;
                     }
@@ -804,6 +816,10 @@
             sfx.whistle();
             say(`Penalty! ${s.name}, ${PENALTY_SECONDS} s in the box`, 2.4);
             banner = {text: "PENALTY!", t: 1.8, color: s.team === SANTA ? COLORS.red : COLORS.humbug};
+            sendToBox(s);
+        }
+
+        function sendToBox(s) {
             if (puck.owner === s) puck.owner = null;
             skaters.splice(skaters.indexOf(s), 1);
             s.boxT = PENALTY_SECONDS;
@@ -853,6 +869,103 @@
             }
             for (let i = clouds.length - 1; i >= 0; i--) if ((clouds[i].t -= dt) <= 0) clouds.splice(i, 1);
             for (let i = impacts.length - 1; i >= 0; i--) if ((impacts[i].t -= dt) <= 0) impacts.splice(i, 1);
+        }
+
+        // An opponent standing in the goalie's crease (the blue half-circle in front of the net)
+        function inCrease(o, team) {
+            const gl = goalX(team);
+            return (o.x - gl) * attackDir(team) > -SKATER_R && Math.hypot(o.x - gl, o.y - H / 2) < CREASE_R + SKATER_R / 2;
+        }
+
+        // Goalies shove attackers out of their crease; that is never a foul
+        function goalieShoves(dt) {
+            for (const g of skaters) {
+                if (!g.goalie || g.fightT > 0) continue;
+                if (g.shoveCd > 0) {
+                    g.shoveCd -= dt;
+                    continue;
+                }
+                for (const o of skaters) {
+                    // A sprinting attacker is not shoved: they are charging the goalie (see checkHits)
+                    if (o.team === g.team || o.goalie || o.fightT > 0 || o.boostT > 0 || !inCrease(o, g.team)) continue;
+                    if (dist(g, o) > SKATER_R * 2 + 14) continue;
+                    // Push away from the middle of the net, out of the crease
+                    let nx = o.x - goalX(g.team), ny = o.y - H / 2;
+                    const n = Math.hypot(nx, ny) || 1;
+                    nx /= n;
+                    ny /= n;
+                    o.vx = nx * 300;
+                    o.vy = ny * 300;
+                    o.stunT = 0.45;
+                    o.boostT = 0;
+                    if (puck.owner === o) {
+                        puck.owner = null;
+                        puck.vx = nx * 200 + rand(-50, 50);
+                        puck.vy = ny * 200 + rand(-50, 50);
+                        puck.ignore = o;
+                        puck.ignoreTimer = 0.4;
+                    }
+                    g.shoveCd = 1.1;
+                    impacts.push({x: (g.x + o.x) / 2, y: (g.y + o.y) / 2, t: 0.35, p: 0.35});
+                    sfx.hit(0.35);
+                    if (Math.random() < 0.4) say(g.team === SANTA ? "Out of my crease!" : "Get lost!", 1.2);
+                    break;
+                }
+            }
+        }
+
+        // Charging a goalie: everybody on the ice piles into one giant fight. Play and the clock
+        // stop; afterwards the instigator goes to the box and play restarts with a faceoff.
+        function startBrawl(instigator, goalie) {
+            state = "brawl";
+            stateTimer = 0;
+            charging = false;
+            brawl = {
+                x: clamp(goalie.x, GOAL_LINE + 80, W - GOAL_LINE - 80),
+                y: clamp(goalie.y, 90, H - 90),
+                by: instigator, noise: 0,
+            };
+            puck.owner = null;
+            puck.vx *= 0.2;
+            puck.vy *= 0.2;
+            for (const s of skaters) s.boostT = s.stunT = 0;
+            clouds.length = 0;
+            clouds.push({x: brawl.x, y: brawl.y, t: BRAWL_SECONDS, total: BRAWL_SECONDS, big: true});
+            impacts.push({x: (instigator.x + goalie.x) / 2, y: (instigator.y + goalie.y) / 2, t: 0.35, p: 1});
+            sfx.hit(1);
+            sfx.whistle();
+            banner = {text: "BENCH-CLEARING BRAWL!", t: 2.6, color: COLORS.red};
+            say("Whoa, whoa, WHOA!", 2.2);
+        }
+
+        function updateBrawl(dt) {
+            // Everyone piles in; whoever reaches the cloud disappears into it
+            for (const s of skaters) {
+                if (s.fightT > 0) {
+                    s.fightT = BRAWL_SECONDS;
+                    s.vx = s.vy = 0;
+                    continue;
+                }
+                const a = s.role * 1.6 + s.team * 0.8;
+                moveSkater(s, brawl.x + Math.cos(a) * 10, brawl.y + Math.sin(a) * 8, 320, dt, false);
+                if (dist(s, brawl) < 36) {
+                    s.fightT = BRAWL_SECONDS;
+                    s.vx = s.vy = 0;
+                }
+            }
+            if ((brawl.noise -= dt) <= 0) {
+                brawl.noise = 0.7;
+                sfx.fight();
+            }
+            updatePuck(dt);
+            if (stateTimer < BRAWL_SECONDS) return;
+            // The cloud clears and everybody is back at their faceoff spot
+            const culprit = brawl.by;
+            brawl = null;
+            if (skaters.includes(culprit)) sendToBox(culprit);
+            resetPositions(true);
+            startFaceoff();
+            say(`${culprit.name}: ${PENALTY_SECONDS} s for charging the goalie`, 2.6);
         }
 
         // Penalty time only runs while the puck is in play; then the player skates back on
@@ -1130,7 +1243,8 @@
                 collideNet(puck, PUCK_R, SANTA, true, 0.5);
                 collideNet(puck, PUCK_R, HUMBUG, true, 0.5);
             }
-            const friction = Math.pow(0.6, dt);
+            // The puck keeps a quarter of its speed per second: long shots die out before the net
+            const friction = Math.pow(0.25, dt);
             puck.vx *= friction;
             puck.vy *= friction;
 
@@ -1309,6 +1423,11 @@
                 return;
             }
 
+            if (state === "brawl") {
+                updateBrawl(dt);
+                return;
+            }
+
             // state === "play"
             clock -= dt;
             if (clock <= 0) {
@@ -1355,7 +1474,9 @@
                     moveSkater(s, t.x, t.y, t.speed, dt, false);
                 }
             }
+            goalieShoves(dt);
             checkHits();
+            if (state !== "play") return;          // charging a goalie just started a brawl
             separateSkaters();
             updatePuck(dt);
             updateHud();
@@ -1474,11 +1595,11 @@
             c.strokeStyle = COLORS.red;
             c.lineWidth = 2;
             c.beginPath();
-            c.arc(GOAL_LINE, H / 2, 48, -Math.PI / 2, Math.PI / 2);
+            c.arc(GOAL_LINE, H / 2, CREASE_R, -Math.PI / 2, Math.PI / 2);
             c.fill();
             c.stroke();
             c.beginPath();
-            c.arc(W - GOAL_LINE, H / 2, 48, Math.PI / 2, Math.PI * 1.5);
+            c.arc(W - GOAL_LINE, H / 2, CREASE_R, Math.PI / 2, Math.PI * 1.5);
             c.fill();
             c.stroke();
 
@@ -1640,12 +1761,14 @@
         function drawFightCloud(c, cl) {
             const {x, y} = cl;
             c.save();
+            // A brawl of the whole game is one giant cloud with fists flying everywhere
+            const k = cl.big ? 2.6 : 1.35;
             c.translate(x, y);
-            c.scale(1.35, 1.35);
+            c.scale(k, k);
             c.translate(-x, -y);
-            c.globalAlpha = Math.min(1, cl.t * 3, (FIGHT_SECONDS - cl.t) * 6);
+            c.globalAlpha = Math.min(1, cl.t * 3, ((cl.total || FIGHT_SECONDS) - cl.t) * 6);
             // Arms and fists sticking out (behind the cloud)
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < (cl.big ? 9 : 4); i++) {
                 const a = elapsed * (i % 2 ? -5 : 7) + i * 1.7;
                 const reach = 37 + Math.sin(elapsed * 13 + i) * 5;
                 const fx = x + Math.cos(a) * reach, fy = y - 4 + Math.sin(a) * reach * 0.7;
