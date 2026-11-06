@@ -54,8 +54,9 @@
     const W = 1000, H = 500, M = 20;          // rink size and board margin
     const CORNER = 90;                        // rounded corner radius
     const GOAL_LINE = 70;                     // distance of goal line from the end boards
-    const NET_MOUTH = 74, NET_DEPTH = 26;
+    const NET_MOUTH = 86, NET_DEPTH = 28;
     const SKATER_R = 16, PUCK_R = 6;
+    const GOALIE_REACH = 12;                  // pads and glove beyond the goalie body
     const GAME_SECONDS = 180;
     const SANTA = 0, HUMBUG = 1;
     const TEAM_NAMES = ["Santa Clauses", "Humbugs"];
@@ -93,6 +94,7 @@
 
     function createGame(trigger) {
         loadStylesheet();
+        const sponsors = loadSponsors();
 
         /* ---------- DOM ---------- */
         const overlay = document.createElement("div");
@@ -160,7 +162,7 @@
         let banner = null;         // {text, t}
 
         const skaters = [];
-        const puck = {x: W / 2, y: H / 2, vx: 0, vy: 0, owner: null, ignore: null, ignoreTimer: 0, lastTouch: null, inNet: null};
+        const puck = {x: W / 2, y: H / 2, vx: 0, vy: 0, owner: null, ignore: null, ignoreTimer: 0, beat: null, lastTouch: null, inNet: null};
         const referee = {x: W / 2, y: 24, vx: 0, vy: 0, bubble: null, bubbleT: 0, arm: 0};
         const flakes = Array.from({length: 70}, () => ({
             x: rand(0, W + 2 * M), y: rand(0, H + 2 * M), r: rand(1, 3), s: rand(15, 45), w: rand(0, 6.28),
@@ -586,24 +588,52 @@
             puck.vy = Math.sin(angle) * speed + s.vy * 0.3;
             puck.ignore = s;
             puck.ignoreTimer = 0.25;
+            puck.beat = null;
             s.cooldown = 0.35;
         }
 
         function shoot(s, power, human) {
             const d = attackDir(s.team);
             const gx = goalX(1 - s.team);
-            const targetY = H / 2 + rand(-NET_MOUTH / 2 - (human ? 0 : 14), NET_MOUTH / 2 + (human ? 0 : 14));
-            const toGoal = Math.atan2(targetY - s.y, gx + d * 8 - s.x);
-            let angle = s.a;
+            const speed = 420 + power * 560;
             if (human) {
-                // Gentle aim assist when roughly facing the net
-                let diff = Math.atan2(Math.sin(toGoal - s.a), Math.cos(toGoal - s.a));
-                if (Math.abs(diff) < 0.6 && (s.x - W / 2) * d > -100) angle = s.a + diff * 0.7;
+                // Aim at the net whenever a shot there is physically possible: the stick blade is
+                // in front of the goal line, the shooter is not facing away from the net and the
+                // angle is not so sharp that the puck would clip the near post. The target is on
+                // the goal line, where checkGoal counts the puck.
+                const toNet = Math.atan2(H / 2 - s.y, gx - s.x);
+                const diff = Math.atan2(Math.sin(toNet - s.a), Math.cos(toNet - s.a));
+                const slope = Math.abs(H / 2 - s.y) / Math.max(1, Math.abs(gx - s.x));
+                const near = PUCK_R + 2 + PUCK_R * slope;   // the puck's edge reaches the near post first
+                const far = PUCK_R + 2;
+                const lo = s.y > H / 2 ? -NET_MOUTH / 2 + far : -NET_MOUTH / 2 + near;
+                const hi = s.y > H / 2 ? NET_MOUTH / 2 - near : NET_MOUTH / 2 - far;
+                if ((gx - s.x) * d > 24 && Math.abs(diff) < 1.75 && lo < hi) {
+                    const ty = H / 2 + rand(lo, hi);
+                    s.a = Math.atan2(ty - s.y, gx - s.x);
+                    releasePuckAt(s, gx, ty, speed);
+                } else {
+                    releasePuck(s, s.a, speed);
+                }
             } else {
-                angle = toGoal + rand(-0.08, 0.08);
+                const targetY = H / 2 + rand(-NET_MOUTH / 2 - 14, NET_MOUTH / 2 + 14);
+                const toGoal = Math.atan2(targetY - s.y, gx + d * 8 - s.x);
+                releasePuck(s, toGoal + rand(-0.08, 0.08), speed);
             }
-            releasePuck(s, angle, 420 + power * 560);
             sfx.shot();
+        }
+
+        // Release the puck so that it travels exactly towards (tx, ty), compensating for the
+        // share of the skater's own velocity that releasePuck adds
+        function releasePuckAt(s, tx, ty, speed) {
+            const p = stickPoint(s);
+            const len = Math.hypot(tx - p.x, ty - p.y) || 1;
+            const ux = (tx - p.x) / len, uy = (ty - p.y) / len;
+            const wx = s.vx * 0.3, wy = s.vy * 0.3;
+            // Solve |k*u - w| = speed for the puck's final speed k along u
+            const uw = ux * wx + uy * wy;
+            const k = uw + Math.sqrt(Math.max(0, uw * uw - (wx * wx + wy * wy) + speed * speed));
+            releasePuck(s, Math.atan2(k * uy - wy, k * ux - wx), speed);
         }
 
         function pickPassTarget(s, human) {
@@ -648,6 +678,7 @@
         function takePuck(s, from) {
             puck.owner = s;
             puck.lastTouch = s.team;
+            puck.beat = null;
             s.holdT = 0;
             if (from) {
                 from.cooldown = 0.6;
@@ -802,9 +833,11 @@
                 options.push(backRight);
                 if (!openFront) options.push(backLeft);
             }
-            // Puck already inside the net (after a goal): keep it in
-            const inside = o.x > x0 && o.x < x1 && o.y > y0 && o.y < y1;
-            if (openFront && inside) return;
+            // Puck between the posts and in front of the back wall: it is entering through the
+            // open front (or already inside after a goal), so let it in instead of pushing it
+            // out through the back of the net
+            const beforeBack = team === SANTA ? o.x > x0 : o.x < x1;
+            if (openFront && o.y > y0 && o.y < y1 && beforeBack) return;
             options.sort((a, b) => a[0] - b[0]);
             const [pen, nx, ny] = options[0];
             o.x += nx * pen;
@@ -919,11 +952,16 @@
             for (const s of skaters) {
                 if (s === puck.ignore || s.cooldown > 0) continue;
                 const p = stickPoint(s);
-                const near = Math.hypot(p.x - puck.x, p.y - puck.y) < 18 || dist(s, puck) < SKATER_R + PUCK_R + 3;
+                const reach = SKATER_R + PUCK_R + (s.goalie ? GOALIE_REACH : 3);
+                const near = Math.hypot(p.x - puck.x, p.y - puck.y) < 18 || dist(s, puck) < reach;
                 if (!near) continue;
                 if (s.goalie) {
-                    const saveChance = clamp(1.25 - speed / 1100, 0.45, 0.97);
-                    if (Math.random() < saveChance) {
+                    // A puck that hits the goalie's body is always stopped; one that only reaches
+                    // the stick, pads or glove can slip past, the more often the faster it is
+                    const body = dist(s, puck) < SKATER_R + PUCK_R + 3;
+                    if (!body && puck.beat === s) break;
+                    const saveChance = clamp(1.6 - speed / 850, 0.2, 0.98);
+                    if (body || Math.random() < saveChance) {
                         if (speed > 650) {
                             // Rebound
                             const d = attackDir(s.team);
@@ -935,8 +973,8 @@
                             takePuck(s, null);
                         }
                     } else {
-                        puck.ignore = s;
-                        puck.ignoreTimer = 0.5;
+                        // Slipped past the stick: no second try with it, but the body still counts
+                        puck.beat = s;
                     }
                     break;
                 }
@@ -1101,6 +1139,8 @@
 
             if (charging) charge = Math.min(1, charge + dt * 1.3);
             if (charging && puck.owner !== controlled) charging = false;
+            // A fully charged shot goes off by itself; releasing the key afterwards does nothing
+            if (charging && charge >= 1) actionShootUp();
 
             for (const s of skaters) {
                 if (s.cooldown > 0) s.cooldown -= dt;
@@ -1146,6 +1186,27 @@
             c.closePath();
         }
 
+        // Sponsors centred in the faceoff circles, crosswise: the NetEye eye top-left and
+        // bottom-right (the faceoff dot lands on its red dot), Würth IT in the other two
+        function drawSponsors(c) {
+            const eye = sponsors.neteye, wuerth = sponsors.wuerth;
+            c.save();
+            c.globalAlpha = 0.3;
+            for (const [fx, fy, logo] of [
+                [GOAL_LINE + 110, H / 2 - 120, eye], [W - GOAL_LINE - 110, H / 2 + 120, eye],
+                [W - GOAL_LINE - 110, H / 2 - 120, wuerth], [GOAL_LINE + 110, H / 2 + 120, wuerth],
+            ]) {
+                if (!logo) continue;
+                const w = logo === eye ? 64 : 104, h = w * logo.height / logo.width;
+                // The Würth PNG has a white background: multiply lets it vanish into the ice.
+                // It sits just below the faceoff dot so the dot does not cover its letters.
+                c.globalCompositeOperation = logo === wuerth ? "multiply" : "source-over";
+                const dy = logo === wuerth ? 14 : 0;
+                c.drawImage(logo, fx - w / 2, fy + dy - h / 2, w, h);
+            }
+            c.restore();
+        }
+
         function drawRink(c) {
             // Background outside the rink: dark night with a garland glow
             c.fillStyle = "#0b1a2e";
@@ -1156,6 +1217,9 @@
             c.fillStyle = COLORS.ice;
             c.fill();
             c.clip();
+
+            // Sponsors frozen under the ice: drawn faded and before the scratches and lines
+            drawSponsors(c);
 
             // Ice scratches
             c.strokeStyle = COLORS.iceLine;
@@ -1214,16 +1278,6 @@
             c.fill();
             c.stroke();
 
-            // Team logos on the ice
-            c.globalAlpha = 0.12;
-            c.font = "bold 40px 'IBM Plex Sans', sans-serif";
-            c.textAlign = "center";
-            c.textBaseline = "middle";
-            c.fillStyle = COLORS.santa;
-            c.fillText("HO HO HO", W / 2 - 300, H / 2);
-            c.fillStyle = COLORS.humbug;
-            c.fillText("BAH HUMBUG", W / 2 + 300, H / 2);
-            c.globalAlpha = 1;
             c.restore();
 
             // Candy cane boards
@@ -1686,5 +1740,26 @@
         link.href = STATIC_BASE + "christmas-hockey.css";
         link.dataset.xmasHockey = "";
         document.head.appendChild(link);
+    }
+
+    // Sponsor logos for the faceoff circles, taken from the theme's own SVGs. The NetEye eye
+    // has a white swoosh for the dark top bar, so it is recoloured for the ice.
+    function loadSponsors() {
+        const sponsors = {neteye: null, wuerth: null};
+        const load = (key, path, recolor) => {
+            fetch(STATIC_BASE + path)
+                .then(r => (r.ok ? r.text() : Promise.reject(r.status)))
+                .then(svg => {
+                    const img = new Image();
+                    img.onload = () => { sponsors[key] = img; };
+                    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(recolor(svg));
+                })
+                .catch(() => {});  // no logo is fine, the rink just stays plain
+        };
+        load("neteye", "img/mobile-neteye-logo.svg", svg => svg.replace(/fill="white"/g, 'fill="#161616"'));
+        const wuerth = new Image();
+        wuerth.onload = () => { sponsors.wuerth = wuerth; };
+        wuerth.src = STATIC_BASE + "img/wuerth-it-logo.png";
+        return sponsors;
     }
 })();
