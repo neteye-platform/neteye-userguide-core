@@ -985,6 +985,19 @@
         }
 
         /* ---------- AI ---------- */
+        // Humbugs play dirty: away from the puck they now and then charge the nearest Santa
+        function dirtyHit(s, dt) {
+            if ((s.checkTimer -= dt) > 0) return;
+            s.checkTimer = rand(0.8, 1.6);
+            if (s.sprintCd > 0 || Math.random() > 0.25) return;
+            const victim = skaters
+                .filter(o => o.team !== s.team && !o.goalie && !o.fightT)
+                .sort((a, b) => dist(a, s) - dist(b, s))[0];
+            if (victim && dist(victim, s) > 45 && dist(victim, s) < 130) {
+                sprint(s, rand(0.5, 1), {x: victim.x - s.x, y: victim.y - s.y});
+            }
+        }
+
         function aiTarget(s, dt) {
             const d = attackDir(s.team);
             const own = goalX(s.team), opp = goalX(1 - s.team);
@@ -1034,6 +1047,8 @@
                 return {x: tx, y: clamp(ty, 40, H - 40), speed: s.team === SANTA ? 190 : 185};
             }
 
+            if (s.team === HUMBUG && s !== chaser) dirtyHit(s, dt);
+
             if (teamHasPuck) {
                 // Support the carrier: get open ahead and to the side
                 const side = s.role === 1 ? -1 : s.role === 2 ? 1 : (carrier.y > H / 2 ? -1 : 1);
@@ -1053,14 +1068,16 @@
                         pokeCheck(s);
                     }
                 }
-                // Now and then charge at an opposing carrier; sometimes too hard
+                // Charge at an opposing carrier: the Humbugs often and too hard, the Santas seldom
+                // and always clean (below the risky power)
                 if (carrier && carrier.team !== s.team && !carrier.goalie) {
                     s.checkTimer -= dt;
                     const dc = dist(s, carrier);
                     if (s.checkTimer <= 0) {
                         s.checkTimer = rand(0.6, 1.2);
-                        if (dc > 50 && dc < 150 && s.sprintCd <= 0 && Math.random() < 0.35) {
-                            sprint(s, rand(0.35, 1), {
+                        const dirty = s.team === HUMBUG;
+                        if (dc > 50 && dc < 150 && s.sprintCd <= 0 && Math.random() < (dirty ? 0.6 : 0.12)) {
+                            sprint(s, dirty ? rand(0.5, 1) : rand(0.25, RISKY_CHECK - 0.05), {
                                 x: carrier.x + carrier.vx * 0.25 - s.x,
                                 y: carrier.y + carrier.vy * 0.25 - s.y,
                             });
