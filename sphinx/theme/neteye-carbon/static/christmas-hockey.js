@@ -989,7 +989,7 @@
         function dirtyHit(s, dt) {
             if ((s.checkTimer -= dt) > 0) return;
             s.checkTimer = rand(0.8, 1.6);
-            if (s.sprintCd > 0 || Math.random() > 0.25) return;
+            if (s.sprintCd > 0 || Math.random() > 0.15) return;
             const victim = skaters
                 .filter(o => o.team !== s.team && !o.goalie && !o.fightT)
                 .sort((a, b) => dist(a, s) - dist(b, s))[0];
@@ -1076,7 +1076,7 @@
                     if (s.checkTimer <= 0) {
                         s.checkTimer = rand(0.6, 1.2);
                         const dirty = s.team === HUMBUG;
-                        if (dc > 50 && dc < 150 && s.sprintCd <= 0 && Math.random() < (dirty ? 0.6 : 0.12)) {
+                        if (dc > 50 && dc < 150 && s.sprintCd <= 0 && Math.random() < (dirty ? 0.45 : 0.12)) {
                             sprint(s, dirty ? rand(0.5, 1) : rand(0.25, RISKY_CHECK - 0.05), {
                                 x: carrier.x + carrier.vx * 0.25 - s.x,
                                 y: carrier.y + carrier.vy * 0.25 - s.y,
