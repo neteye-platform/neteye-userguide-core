@@ -19,8 +19,11 @@ test('CRA report button opens the incident form without CSP violations', async (
         });
     });
 
+    const version = new URL(baseURL).pathname.split("/")[1];
+    expect(version, 'baseURL must end with a version, e.g. https://neteye.guide/4.51').toMatch(/^\d+\.\d+$/);
+
     // The button exists from 4.51
-    const [major, minor] = new URL(baseURL).pathname.split("/")[1].split(".").map(Number);
+    const [major, minor] = version.split(".").map(Number);
     test.skip(major < 4 || (major === 4 && minor < 51), 'This version has no CRA report button');
 
     await page.goto(baseURL + "/security-policy/cra-compliance.html");
@@ -35,8 +38,9 @@ test('CRA report button opens the incident form without CSP violations', async (
 
     await button.click();
 
-    const form = page.locator('iframe[src*="siwuerthphoenix.atlassian.net"]');
-    await expect(form).toBeVisible({ timeout: 15_000 });
+    const collector = page.frameLocator('iframe[src*="siwuerthphoenix.atlassian.net"]');
+    await expect(collector.getByRole('heading', { name: 'Report a security incident' })).toBeVisible({ timeout: 15_000 });
+    await expect(collector.locator('#jic-collector-form #summary')).toBeVisible();
 
     expect(await page.evaluate(() => (window as any).cspViolations)).toEqual([]);
 });
