@@ -21,11 +21,14 @@ test('CRA report button opens the incident form without CSP violations', async (
         });
     });
 
+    // Versions before 4.51 report CRA incidents by email and have no button
+    const [major, minor] = new URL(baseURL).pathname.split("/")[1].split(".").map(Number);
+    test.skip(major < 4 || (major === 4 && minor < 51), 'This version has no CRA report button');
+
     await page.goto(baseURL + "/security-policy/cra-compliance.html");
 
-    // Versions before 4.51 report CRA incidents by email and have no button
     const button = page.locator('#cra-report-trigger');
-    test.skip(await button.count() === 0, 'This version has no CRA report button');
+    await expect(button).toHaveCount(1);
 
     // Accept cookies so that the banner does not cover the button
     const acceptCookies = page.locator('button.btn-accept-cookie');

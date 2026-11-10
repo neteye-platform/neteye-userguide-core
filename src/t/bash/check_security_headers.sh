@@ -7,9 +7,20 @@ set -e
 # Can be triggered with BASE_URL=https://neteye.guide NETEYE_VERSION=4.51 sh src/t/bash/check_security_headers.sh
 
 JIRA_HOST="https://siwuerthphoenix.atlassian.net"
+# First version whose CRA compliance page has the "Report a CRA incident" button
+CRA_REPORT_BUTTON_SINCE="4.51"
 
+# Prints a test result and stores it as the Tekton task result
 report() {
     printf "\t%s\n" "$1" | tee /tekton/results/status
+}
+
+# Succeeds if version $1 is equal to or later than version $2 (format MAJOR.MINOR)
+version_at_least() {
+    awk -v a="$1" -v b="$2" 'BEGIN {
+        split(a, x, "."); split(b, y, ".")
+        exit !((x[1] + 0 > y[1] + 0) || (x[1] + 0 == y[1] + 0 && x[2] + 0 >= y[2] + 0))
+    }'
 }
 
 # Prints the response headers of a URL, without following redirects
@@ -64,6 +75,10 @@ URL="${BASE_URL}/${NETEYE_VERSION}/security-policy/cra-compliance.html"
 echo "[i] Testing security headers on ${URL}"
 HEADERS=$(get_headers "$URL")
 if ! printf "%s\n" "$HEADERS" | head -n 1 | grep -q " 200"; then
+    if version_at_least "$NETEYE_VERSION" "$CRA_REPORT_BUTTON_SINCE"; then
+        report "[-] ${URL} must exist from version ${CRA_REPORT_BUTTON_SINCE}: got '$(printf "%s\n" "$HEADERS" | head -n 1)'"
+        exit 1
+    fi
     report "[i] Skipped: ${URL} does not exist in this version"
     exit 0
 fi
