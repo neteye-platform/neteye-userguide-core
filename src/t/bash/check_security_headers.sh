@@ -2,20 +2,17 @@
 
 set -e
 
-# This script is intended to check the security headers that nginx sets (see conf/nginx/conf.d/).
-# Since we are using alpine containers we have only sh and not bash
+# Checks the security headers set by nginx
 # Can be triggered with BASE_URL=https://neteye.guide NETEYE_VERSION=4.51 sh src/t/bash/check_security_headers.sh
 
 JIRA_HOST="https://siwuerthphoenix.atlassian.net"
-# First version whose CRA compliance page has the "Report a CRA incident" button
 CRA_REPORT_BUTTON_SINCE="4.51"
 
-# Prints a test result and stores it as the Tekton task result
 report() {
     printf "\t%s\n" "$1" | tee /tekton/results/status
 }
 
-# Succeeds if version $1 is equal to or later than version $2 (format MAJOR.MINOR)
+# Succeeds if version $1 >= $2 (MAJOR.MINOR)
 version_at_least() {
     awk -v a="$1" -v b="$2" 'BEGIN {
         split(a, x, "."); split(b, y, ".")
@@ -23,12 +20,10 @@ version_at_least() {
     }'
 }
 
-# Prints the response headers of a URL, without following redirects
 get_headers() {
     curl -s -o /dev/null -D - "$1" | tr -d '\r'
 }
 
-# Prints the values of all the headers with the given name (case-insensitive)
 header_values() {
     printf "%s\n" "$1" | grep -i "^$2:" | cut -d ':' -f 2- || true
 }
@@ -41,8 +36,7 @@ assert_header_present() {
     report "[+] Header $2 is present on $3"
 }
 
-# The browser enforces every Content-Security-Policy header it gets, so a second one (for example
-# from a deployment config map) silently cancels the exceptions of the first one.
+# Browsers enforce every CSP header: a second one cancels the exceptions
 assert_single_csp() {
     COUNT=$(header_values "$1" "Content-Security-Policy" | grep -c . || true)
     if [ "$COUNT" -ne 1 ]; then
@@ -52,7 +46,6 @@ assert_single_csp() {
     report "[+] Exactly one Content-Security-Policy header on $2"
 }
 
-# Pages without an exception must use the default CSP, without the Jira host
 URL="${BASE_URL}/${NETEYE_VERSION}/index.html"
 echo "[i] Testing security headers on ${URL}"
 HEADERS=$(get_headers "$URL")
@@ -63,14 +56,12 @@ if header_values "$HEADERS" "Content-Security-Policy" | grep -q "$JIRA_HOST"; th
     exit 1
 fi
 
-# Locations with their own add_header must keep the server-level headers
 URL="${BASE_URL}/versions.json"
 echo "[i] Testing security headers on ${URL}"
 HEADERS=$(get_headers "$URL")
 assert_header_present "$HEADERS" "Strict-Transport-Security" "$URL"
 assert_header_present "$HEADERS" "Access-Control-Allow-Origin" "$URL"
 
-# The CRA compliance page must allow the Jira Issue Collector (script and form iframe)
 URL="${BASE_URL}/${NETEYE_VERSION}/security-policy/cra-compliance.html"
 echo "[i] Testing security headers on ${URL}"
 HEADERS=$(get_headers "$URL")
