@@ -35,6 +35,11 @@ for dir in "$UG_ALL_DIR"/*/; do
 
     if [ "$CURR_MINOR" -le "$ARCHIVE_MINOR_VERSION_LESSTHAN_EQUAL_TO" ]; then
         echo "Archiving $dir"
+        # TODO: decide whether archived versions should stay unzipped in $UG_ALL_DIR.
+        # They are zipped into $UG_ARCHIVED_DIR but never removed from $UG_ALL_DIR, and
+        # nginx only serves $UG_TARGET_DIR, so the unzipped copies are unreachable yet
+        # carried over to every new image (2026-11-12: 22 versions, 4.17-4.38, ~1 GB of
+        # the ~3.1 GB image). Check nothing else reads them before cleaning them up.
         (cd "$(dirname "$dir")" && zip --filesync --recurse-paths "$UG_ARCHIVED_DIR"/"$CURR_VERSION".zip "$(basename "$dir")")
     else
         echo "Linking $dir to $UG_TARGET_DIR"

@@ -16,7 +16,8 @@ spec:
       - name: pathInRepo
         value: neteye-userguide/neteye-userguide-alpha.yaml
       - name: revision
-        value: master
+        # Revert me to master before merge
+        value: perf/userguide-pr-delta-image
   timeouts:
     pipeline: "1h00m0s"
   workspaces:
@@ -34,7 +35,8 @@ spec:
         status: {}
   params:
     - name: taskRevision
-      value: master
+      # Revert me to master before merge
+      value: perf/userguide-pr-delta-image
     - name: prDestinationBranch
       value: "{{ target_branch }}"
     - name: projects
