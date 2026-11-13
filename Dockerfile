@@ -21,7 +21,7 @@ ARG IGNORE_WARNINGS
 
 # Use a build container to compile in order to have all required tools
 # but do not bring them in the final image to reduce space usage
-FROM python:3.14.7-alpine3.23@sha256:218761489de417a6eb0808e264cbdd7043ec6659fe5a61898815e9848536541d AS ug_builder
+FROM python:3.15.2-alpine3.23@sha256:32f06114a111c2467804d06194c5584f16804a78cfaf427fb1fcbb0b3391d0f1 AS ug_builder
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG VERSIONS_FILE_PATH
@@ -69,7 +69,7 @@ FROM ghcr.io/witglobal/neteye-userguide-prod:latest AS previous_ug
 
 ################################################################################
 # Archive old versions of the Userguide
-FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS ug_version_archiver
+FROM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS ug_version_archiver
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
@@ -124,7 +124,7 @@ EXPOSE 8080
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
-FROM nginxinc/nginx-unprivileged:1.31.4-alpine-slim@sha256:d668aa123a6ec3216ba5ae6b398ae8001d5e81d3142d3659e20354fd0c3c3125
+FROM nginxinc/nginx-unprivileged:1.31.7-alpine-slim@sha256:a8cb0f33d51fa107c96fd2bd3a71aaf564ec131e9d2bdf8700944f0ed8b170d7
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 
