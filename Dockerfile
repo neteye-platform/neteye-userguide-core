@@ -106,7 +106,7 @@ FROM previous_ug AS ug_pr
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 
-USER root
+USER 0
 RUN find /usr/share/nginx/html -mindepth 1 -maxdepth 1 ! -name archived -exec rm -rf {} + && \
     rm -rf "/usr/share/nginx/all/${UG_VERSION_TO_BUILD}"
 
