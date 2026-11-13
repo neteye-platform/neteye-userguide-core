@@ -41,6 +41,8 @@ for dir in "$UG_ALL_DIR"/*/; do
         # carried over to every new image (2026-11-12: 22 versions, 4.17-4.38, ~1 GB of
         # the ~3.1 GB image). Check nothing else reads them before cleaning them up.
         (cd "$(dirname "$dir")" && zip --filesync --recurse-paths "$UG_ARCHIVED_DIR"/"$CURR_VERSION".zip "$(basename "$dir")")
+        # Archived versions are served only as zip, so the unpacked copy is not needed
+        rm -rf "$dir"
     else
         echo "Linking $dir to $UG_TARGET_DIR"
         ln -s "$dir" $UG_TARGET_DIR
