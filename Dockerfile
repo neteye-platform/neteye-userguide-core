@@ -73,8 +73,9 @@ FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6ee
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
-# Zips are hosted as GitHub release assets, so only newly archived ones land here, outside html/
-ENV UG_ARCHIVED_DIR=/tmp/archived-export
+# Zips are hosted as GitHub release assets: newly archived ones land outside html/,
+# where the pipeline picks them up for upload
+ENV UG_ARCHIVED_DIR=/usr/share/nginx/archived-export
 
 COPY --from=previous_ug /usr/share/nginx/all /usr/share/nginx/all
 # Also drop the doctrees cache that older images still ship
@@ -94,12 +95,6 @@ COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 RUN $UG_HOME/src/scripts/archive_ug_versions.sh
 
 ################################################################################
-# Newly archived zips, to be uploaded with src/scripts/upload_archived_versions.sh
-# e.g. `buildah build --target archived_export --output type=local,dest=archived-export .`
-FROM scratch AS archived_export
-COPY --from=ug_version_archiver /tmp/archived-export/ /
-
-################################################################################
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
@@ -112,6 +107,7 @@ COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=644 /usr/share/nginx
 # Use the just built version.json file instead of the one from the previous image
 COPY --from=ug_builder --chown=nginx:nginx --chmod=644 $UG_HOME/versions.json  /usr/share/nginx/html/versions.json
 COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=755 /usr/share/nginx/all /usr/share/nginx/all
+COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=644 /usr/share/nginx/archived-export /usr/share/nginx/archived-export
 # Version-independent static assets (e.g. logos), accessible at /static/img/
 COPY --chown=nginx:nginx --chmod=644 static/img/ /usr/share/nginx/html/static/img/
 
