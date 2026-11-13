@@ -73,12 +73,12 @@ FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6ee
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
+# Zips are hosted as GitHub release assets, so only newly archived ones land here, outside html/
+ENV UG_ARCHIVED_DIR=/tmp/archived-export
 
 COPY --from=previous_ug /usr/share/nginx/all /usr/share/nginx/all
 # Also drop the doctrees cache that older images still ship
 RUN rm -rf /usr/share/nginx/all/$UG_VERSION_TO_BUILD/* /usr/share/nginx/all/*/.doctrees
-# We copy the archived versions from the previous image to not have to rebuild them
-COPY --from=previous_ug /usr/share/nginx/html/archived /usr/share/nginx/html/archived
 COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERSION_TO_BUILD/
 
 # Now we have all the versions in /usr/share/nginx/all. We want to zip every
@@ -94,6 +94,12 @@ COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 RUN $UG_HOME/src/scripts/archive_ug_versions.sh
 
 ################################################################################
+# Newly archived zips, to be uploaded with src/scripts/upload_archived_versions.sh
+# e.g. `buildah build --target archived_export --output type=local,dest=archived-export .`
+FROM scratch AS archived_export
+COPY --from=ug_version_archiver /tmp/archived-export/ /
+
+################################################################################
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
@@ -105,7 +111,6 @@ COPY --from=ug_builder --chown=nginx:nginx /tmp/nginx/ /etc/nginx/
 COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=644 /usr/share/nginx/html /usr/share/nginx/html
 # Use the just built version.json file instead of the one from the previous image
 COPY --from=ug_builder --chown=nginx:nginx --chmod=644 $UG_HOME/versions.json  /usr/share/nginx/html/versions.json
-RUN chmod 755 /usr/share/nginx/html/archived
 COPY --from=ug_version_archiver --chown=nginx:nginx --chmod=755 /usr/share/nginx/all /usr/share/nginx/all
 # Version-independent static assets (e.g. logos), accessible at /static/img/
 COPY --chown=nginx:nginx --chmod=644 static/img/ /usr/share/nginx/html/static/img/

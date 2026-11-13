@@ -7,7 +7,7 @@ set -e
 NGINX_BASE_DIR=/usr/share/nginx
 UG_ALL_DIR="$NGINX_BASE_DIR"/all
 UG_TARGET_DIR="$NGINX_BASE_DIR"/html
-UG_ARCHIVED_DIR="$UG_TARGET_DIR"/archived
+UG_ARCHIVED_DIR=${UG_ARCHIVED_DIR:-"$UG_TARGET_DIR"/archived}
 NETEYE_VERSION_RE='^4\.[0-9]+$'
 LATEST_NETEYE_MINOR=$(jq -r '.[] | select(.released == true) | .version' "$UG_HOME"/versions.json | sort -V | tail -n 1 | cut -d'.' -f2)
 ARCHIVE_MINOR_VERSION_LESSTHAN_EQUAL_TO=$((LATEST_NETEYE_MINOR - ARCHIVE_LAST_N_MINOR))
@@ -16,8 +16,8 @@ LAST_ARCHIVED_VERSION_JSON_PATH="$UG_TARGET_DIR"/last_archived_version.json
 echo "Archiving versions older than $ARCHIVE_MINOR_VERSION_LESSTHAN_EQUAL_TO"
 
 # Check if the directory exists, if not create it
-if [ ! -d $UG_ARCHIVED_DIR ]; then
-    mkdir -p $UG_ARCHIVED_DIR
+if [ ! -d "$UG_ARCHIVED_DIR" ]; then
+    mkdir -p "$UG_ARCHIVED_DIR"
 fi
 
 cd $UG_ALL_DIR || exit
