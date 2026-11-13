@@ -120,7 +120,7 @@ body {
     line-height: var(--cds-body-compact-02-line-height);
     letter-spacing: var(--cds-body-compact-01-letter-spacing);
     margin-block-end: var(--cds-spacing-07);
-    margin-block-start: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-06);
     /*!* Needed because on mobile otherwise long paths will generate horizontal scrolling *!*/
     word-wrap: break-word;
 }
@@ -237,6 +237,15 @@ cds-modal-close-button::part(button) {
 
 /* Headings */
 
+/* The page title is already shown in the banner, so hide the duplicate one
+   (and its headerlink icon since we don't need a link to the top of the page,
+   we can do that with its URL) at the top of the content. The second selector
+   covers the generated index page, whose h1 is not wrapped in a section. */
+.body > section:first-of-type > h1:first-of-type,
+.body > h1:first-child {
+    display: none;
+}
+
 .body h1 {
     margin-block-start: 0;
 }
@@ -264,14 +273,15 @@ cds-modal-close-button::part(button) {
     font-weight: var(--cds-productive-heading-04-font-weight);
     line-height: var(--cds-productive-heading-04-line-height);
     margin-block-end: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-09);
 }
 
 .body h3 {
     font-size: var(--cds-productive-heading-03-font-size);
     font-weight: 500;
     line-height: var(--cds-productive-heading-03-line-height);
-    margin-block-end: var(--cds-spacing-07);
-    margin-block-start: var(--cds-spacing-07);
+    margin-block-end: var(--cds-spacing-06);
+    margin-block-start: var(--cds-spacing-08);
 }
 
 .body h4 {

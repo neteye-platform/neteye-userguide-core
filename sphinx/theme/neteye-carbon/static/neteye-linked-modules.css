@@ -23,6 +23,7 @@
 }
 .body .linked_modules h1 {
     margin-block: 0 var(--cds-spacing-05);
+    padding-top: 3rem;
 }
 
 .body .linked_modules p {
