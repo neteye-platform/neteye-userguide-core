@@ -30,4 +30,5 @@ if [ "${IGNORE_WARNINGS}" = "true" ]; then
     WARN=""
 fi
 
-sphinx-build -c "${UG_HOME}/sphinx/" ${WARN} -b html "${UG_HOME}"/sphinx/source "$UG_HOME"/sphinx/build/html/
+# Keep the doctrees cache out of the html output, so it does not end up in the image
+sphinx-build -c "${UG_HOME}/sphinx/" ${WARN} -b html -d "$UG_HOME"/sphinx/build/doctrees "${UG_HOME}"/sphinx/source "$UG_HOME"/sphinx/build/html/
