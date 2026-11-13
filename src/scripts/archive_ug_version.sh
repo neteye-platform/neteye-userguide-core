@@ -36,6 +36,8 @@ for dir in "$UG_ALL_DIR"/*/; do
     if [ "$CURR_MINOR" -le "$ARCHIVE_MINOR_VERSION_LESSTHAN_EQUAL_TO" ]; then
         echo "Archiving $dir"
         (cd "$(dirname "$dir")" && zip --filesync --recurse-paths "$UG_ARCHIVED_DIR"/"$CURR_VERSION".zip "$(basename "$dir")")
+        # Archived versions are served only as zip, so the unpacked copy is not needed
+        rm -rf "$dir"
     else
         echo "Linking $dir to $UG_TARGET_DIR"
         ln -s "$dir" $UG_TARGET_DIR

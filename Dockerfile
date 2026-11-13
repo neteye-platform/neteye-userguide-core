@@ -75,7 +75,8 @@ ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
 
 COPY --from=previous_ug /usr/share/nginx/all /usr/share/nginx/all
-RUN rm -rf /usr/share/nginx/all/$UG_VERSION_TO_BUILD/*
+# Also drop the doctrees cache that older images still ship
+RUN rm -rf /usr/share/nginx/all/$UG_VERSION_TO_BUILD/* /usr/share/nginx/all/*/.doctrees
 # We copy the archived versions from the previous image to not have to rebuild them
 COPY --from=previous_ug /usr/share/nginx/html/archived /usr/share/nginx/html/archived
 COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERSION_TO_BUILD/
