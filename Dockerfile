@@ -94,6 +94,33 @@ COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 RUN $UG_HOME/src/scripts/archive_ug_versions.sh
 
 ################################################################################
+# PR builds only (--target ug_pr): previous_ug + the rebuilt version on top,
+# so the push uploads only the new layer instead of the whole ~3 GB image.
+# Never promote it: layers would pile up on every release.
+
+# Archived zips are kept from previous_ug
+FROM ug_version_archiver AS ug_html_without_archived
+RUN rm -rf /usr/share/nginx/html/archived
+
+FROM previous_ug AS ug_pr
+ARG UG_HOME
+ARG UG_VERSION_TO_BUILD
+
+USER 0
+RUN find /usr/share/nginx/html -mindepth 1 -maxdepth 1 ! -name archived -exec rm -rf {} + && \
+    rm -rf "/usr/share/nginx/all/${UG_VERSION_TO_BUILD}"
+
+COPY --from=ug_builder --chown=nginx:nginx /tmp/nginx/ /etc/nginx/
+COPY --from=ug_html_without_archived --chown=nginx:nginx --chmod=644 /usr/share/nginx/html /usr/share/nginx/html
+COPY --from=ug_builder --chown=nginx:nginx --chmod=644 $UG_HOME/versions.json  /usr/share/nginx/html/versions.json
+COPY --from=ug_builder --chown=nginx:nginx --chmod=755 $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERSION_TO_BUILD/
+COPY --chown=nginx:nginx --chmod=644 static/img/ /usr/share/nginx/html/static/img/
+
+USER 101
+
+EXPOSE 8080
+
+################################################################################
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
