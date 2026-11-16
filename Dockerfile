@@ -17,6 +17,7 @@ ARG VERSIONS_FILE_PATH
 ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
+ARG DEPS_GRAPH_URL="https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan"
 
 
 # Use a build container to compile in order to have all required tools
@@ -28,6 +29,7 @@ ARG VERSIONS_FILE_PATH
 ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
+ARG DEPS_GRAPH_URL
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache curl grep jq
@@ -40,7 +42,7 @@ RUN $UG_HOME/src/scripts/create_about_file.sh $UG_HOME $UG_VERSION_TO_BUILD $BUI
 # Get from internal endpoint only the to be built version dependencies graph images of NetEye parallel procedures
 # hadolint ignore=DL4006
 RUN mkdir -p /tmp/deps-graph-images/ && \
-    curl -sk https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan/ | grep -oP "href=\"\K${UG_VERSION_TO_BUILD}-dependencies-[^\"]+\.svg" | xargs -I {} curl -sk https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan/\{\} -o /tmp/deps-graph-images/{} && \
+    curl -sk "${DEPS_GRAPH_URL%/}/" | grep -oP "href=\"\K${UG_VERSION_TO_BUILD}-dependencies-[^\"]+\.svg" | xargs -I {} curl -sk "${DEPS_GRAPH_URL%/}/"\{\} -o /tmp/deps-graph-images/{} && \
     # Make available the dependencies graph images in the sphinx source and remove version from filename
     for f in /tmp/deps-graph-images/*; do \
     filename="$(basename "$f")"; \
