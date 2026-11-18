@@ -109,9 +109,6 @@ body {
         display: none;
     }
 }
-.body .section:not(:first-child) {
-    padding-block-start: var(--cds-spacing-09);
-}
 
 /* Text */
 .body p {
@@ -261,6 +258,17 @@ cds-modal-close-button::part(button) {
 .body > section:first-of-type > h1:first-of-type > a.headerlink,
 .body > h1:first-child > a.headerlink {
     visibility: hidden;
+}
+
+/* The banner margin alone sets the space above the content. */
+.body > :first-child,
+.body > section:first-child > h1:first-of-type + *,
+.body > section:first-child > h1:first-of-type + section > h2,
+.body > h1:first-child + * {
+    margin-block-start: 0;
+}
+.body > section:first-child > h1:first-of-type + .toctree-wrapper {
+    padding-block-start: 0;
 }
 
 .body h1 {

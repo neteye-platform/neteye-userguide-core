@@ -20,7 +20,7 @@
 
 #banner .title {
     font-size: var(--cds-heading-06-font-size);
-    font-weight: var(--cds-heading-06-font-weight);
+    font-weight: 400;
     margin: var(--cds-spacing-02) 0 0 0;
 }
 
@@ -51,7 +51,6 @@
 
     #banner .title {
         font-size: 2.3rem;
-        font-weight: var(--cds-heading-06-font-weight);
     }
 
     .search-banner .banner-title {
@@ -65,7 +64,7 @@
         padding-inline: calc(var(--padding-inline)/1.5);
         min-height: 13.5rem;
         padding-block-end: 2rem;
-        margin-block-end: 0.75rem;
+        margin-block-end: 2.75rem;
     }
 
     #banner.search-banner {
@@ -74,7 +73,6 @@
 
     #banner .title {
         font-size: 2.825rem;
-        font-weight: 400;
     }
 
     .search-banner .banner-title {
@@ -96,7 +94,6 @@
 
     #banner .title {
         font-size: 3.25rem;
-        font-weight: var(--cds-heading-06-font-weight);
     }
 
     .search-banner .banner-title {
@@ -109,7 +106,6 @@
 @media (min-width: 1720px) {
     #banner .title {
         font-size: 4rem;
-        font-weight: var(--cds-heading-06-font-weight);
     }
 }
 
