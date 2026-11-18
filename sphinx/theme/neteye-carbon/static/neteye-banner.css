@@ -20,13 +20,13 @@
 
 #banner .title {
     font-size: var(--cds-heading-06-font-size);
-    font-weight: 400;
+    font-weight: var(--cds-heading-05-font-weight);
     margin: var(--cds-spacing-02) 0 0 0;
 }
 
 .search-banner .banner-title {
     font-size: var(--cds-heading-06-font-size);
-    font-weight: var(--cds-heading-06-font-weight);
+    font-weight: var(--cds-heading-05-font-weight);
 }
 
 
@@ -55,7 +55,6 @@
 
     .search-banner .banner-title {
         font-size: 2.3rem;
-        font-weight: var(--cds-heading-06-font-weight);
     }
 }
 
@@ -98,7 +97,6 @@
 
     .search-banner .banner-title {
         font-size: 3.25rem;
-        font-weight: var(--cds-heading-06-font-weight);
     }
 
 }

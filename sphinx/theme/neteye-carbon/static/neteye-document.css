@@ -688,16 +688,6 @@ button.copybtn svg,
     white-space: break-spaces;
 }
 
-/*!* this ensure that links on other pages will lead*/
-/* * to correct section displaying the title*/
-.section > span[id]::before {
-    content: "";
-    display: block;
-    height: var(--cds-spacing-09);
-    margin-block-start: calc(-1 * var(--cds-spacing-09));
-    visibility: hidden;
-}
-
 /*!* TOC *!*/
 .body .toctree-wrapper {
     padding-top: 0.5em;
