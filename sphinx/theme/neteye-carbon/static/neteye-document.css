@@ -109,9 +109,6 @@ body {
         display: none;
     }
 }
-.body .section:not(:first-child) {
-    padding-block-start: var(--cds-spacing-09);
-}
 
 /* Text */
 .body p {
@@ -120,7 +117,7 @@ body {
     line-height: var(--cds-body-compact-02-line-height);
     letter-spacing: var(--cds-body-compact-01-letter-spacing);
     margin-block-end: var(--cds-spacing-07);
-    margin-block-start: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-06);
     /*!* Needed because on mobile otherwise long paths will generate horizontal scrolling *!*/
     word-wrap: break-word;
 }
@@ -237,6 +234,43 @@ cds-modal-close-button::part(button) {
 
 /* Headings */
 
+/* The page title is already shown in the banner, so visually hide the
+   duplicate one (and its headerlink icon since we don't need a link to the top
+   of the page, we can do that with its URL) at the top of the content, while
+   keeping it available to assistive technologies. The second selector
+   covers the generated index page, whose h1 is not wrapped in a section. */
+.body > section:first-of-type > h1:first-of-type,
+.body > h1:first-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Keep the hidden title's headerlink out of the tab order and the
+   accessibility tree, since it would be an invisible focus stop. */
+.body > section:first-of-type > h1:first-of-type > a.headerlink,
+.body > h1:first-child > a.headerlink {
+    visibility: hidden;
+}
+
+/* The banner margin alone sets the space above the content. */
+.body > :first-child,
+.body > section:first-child > h1:first-of-type + *,
+.body > section:first-child > h1:first-of-type + section > h2,
+.body > h1:first-child + * {
+    margin-block-start: 0;
+}
+.body > section:first-child > h1:first-of-type + .toctree-wrapper {
+    padding-block-start: 0;
+}
+
 .body h1 {
     margin-block-start: 0;
 }
@@ -264,14 +298,15 @@ cds-modal-close-button::part(button) {
     font-weight: var(--cds-productive-heading-04-font-weight);
     line-height: var(--cds-productive-heading-04-line-height);
     margin-block-end: var(--cds-spacing-07);
+    margin-block-start: var(--cds-spacing-09);
 }
 
 .body h3 {
     font-size: var(--cds-productive-heading-03-font-size);
     font-weight: 500;
     line-height: var(--cds-productive-heading-03-line-height);
-    margin-block-end: var(--cds-spacing-07);
-    margin-block-start: var(--cds-spacing-07);
+    margin-block-end: var(--cds-spacing-06);
+    margin-block-start: var(--cds-spacing-08);
 }
 
 .body h4 {
@@ -651,16 +686,6 @@ button.copybtn svg,
     line-height: var(--cds-code-01-line-height);
     overflow: hidden;
     white-space: break-spaces;
-}
-
-/*!* this ensure that links on other pages will lead*/
-/* * to correct section displaying the title*/
-.section > span[id]::before {
-    content: "";
-    display: block;
-    height: var(--cds-spacing-09);
-    margin-block-start: calc(-1 * var(--cds-spacing-09));
-    visibility: hidden;
 }
 
 /*!* TOC *!*/
