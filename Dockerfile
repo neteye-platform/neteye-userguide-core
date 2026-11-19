@@ -126,7 +126,7 @@ EXPOSE 8080
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
-FROM nginxinc/nginx-unprivileged:1.31.4-alpine-slim@sha256:d668aa123a6ec3216ba5ae6b398ae8001d5e81d3142d3659e20354fd0c3c3125
+FROM quay.io/nginx/nginx-unprivileged:1.31.9-alpine-slim@sha256:75e85a09b0f25bd46d49a9fd85589ffa70b0459c8ed5ee0dc6596fd642e1f829
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 
