@@ -22,7 +22,7 @@ ARG DEPS_GRAPH_URL="https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.l
 
 # Use a build container to compile in order to have all required tools
 # but do not bring them in the final image to reduce space usage
-FROM python:3.14.7-alpine3.23@sha256:218761489de417a6eb0808e264cbdd7043ec6659fe5a61898815e9848536541d AS ug_builder
+FROM python:3.15.2-alpine3.23@sha256:32f06114a111c2467804d06194c5584f16804a78cfaf427fb1fcbb0b3391d0f1 AS ug_builder
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG VERSIONS_FILE_PATH
@@ -71,7 +71,7 @@ FROM ghcr.io/witglobal/neteye-userguide-prod:latest AS previous_ug
 
 ################################################################################
 # Archive old versions of the Userguide
-FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS ug_version_archiver
+FROM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS ug_version_archiver
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
