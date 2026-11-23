@@ -48,9 +48,8 @@ Use ``neteye-console`` for shell commands with NetEye prompts::
      cluster# neteye status
      cluster-node-N(standby)# echo "Ready"
 
-The block is highlighted as bash, but built-in commands such as ``cd`` and
-``echo`` use the regular code text color. At the start of a line, any text
-without spaces up to the first ``#``, followed by a space (e.g. ``#``,
+The block is highlighted as bash. At the start of a line, any text without
+spaces up to the first ``#``, followed by a space (e.g. ``#``,
 ``cluster#``), is a prompt: it is shown in a different color and the copy
 button leaves it out. All other lines are copied unchanged. Existing
 ``bash`` and ``console`` blocks are unchanged.
