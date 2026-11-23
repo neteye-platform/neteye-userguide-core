@@ -156,6 +156,12 @@ ul {
     margin-block-start: 0;
     margin-block-end: var(--cds-spacing-06);
 }
+/* Nested lists must not add extra space before the next parent list item */
+.body li > dl,
+.body li > ol,
+.body li > ul {
+    margin-block-end: 0;
+}
 
 /*!* Images *!*/
 .body figure {
