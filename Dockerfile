@@ -17,6 +17,7 @@ ARG VERSIONS_FILE_PATH
 ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
+ARG DEPS_GRAPH_URL="https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan"
 
 
 # Use a build container to compile in order to have all required tools
@@ -28,6 +29,7 @@ ARG VERSIONS_FILE_PATH
 ARG FEATURE_TO_BUILD
 ARG BUILD_NUMBER
 ARG IGNORE_WARNINGS
+ARG DEPS_GRAPH_URL
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache curl grep jq
@@ -40,7 +42,7 @@ RUN $UG_HOME/src/scripts/create_about_file.sh $UG_HOME $UG_VERSION_TO_BUILD $BUI
 # Get from internal endpoint only the to be built version dependencies graph images of NetEye parallel procedures
 # hadolint ignore=DL4006
 RUN mkdir -p /tmp/deps-graph-images/ && \
-    curl -sk https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan/ | grep -oP "href=\"\K${UG_VERSION_TO_BUILD}-dependencies-[^\"]+\.svg" | xargs -I {} curl -sk https://neteye-userguide-deps-graph.apps.rdopenshift.si.wp.lan/\{\} -o /tmp/deps-graph-images/{} && \
+    curl -sk "${DEPS_GRAPH_URL%/}/" | grep -oP "href=\"\K${UG_VERSION_TO_BUILD}-dependencies-[^\"]+\.svg" | xargs -I {} curl -sk "${DEPS_GRAPH_URL%/}/"\{\} -o /tmp/deps-graph-images/{} && \
     # Make available the dependencies graph images in the sphinx source and remove version from filename
     for f in /tmp/deps-graph-images/*; do \
     filename="$(basename "$f")"; \
@@ -75,7 +77,8 @@ ARG UG_VERSION_TO_BUILD
 ARG ARCHIVE_LAST_N_MINOR=12
 
 COPY --from=previous_ug /usr/share/nginx/all /usr/share/nginx/all
-RUN rm -rf /usr/share/nginx/all/$UG_VERSION_TO_BUILD/*
+# Also drop the doctrees cache that older images still ship
+RUN rm -rf /usr/share/nginx/all/$UG_VERSION_TO_BUILD/* /usr/share/nginx/all/*/.doctrees
 # We copy the archived versions from the previous image to not have to rebuild them
 COPY --from=previous_ug /usr/share/nginx/html/archived /usr/share/nginx/html/archived
 COPY --from=ug_builder $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERSION_TO_BUILD/
@@ -93,10 +96,37 @@ COPY --from=ug_builder "$UG_HOME/versions.json"  "$UG_HOME/versions.json"
 RUN $UG_HOME/src/scripts/archive_ug_versions.sh
 
 ################################################################################
+# PR builds only (--target ug_pr): previous_ug + the rebuilt version on top,
+# so the push uploads only the new layer instead of the whole ~3 GB image.
+# Never promote it: layers would pile up on every release.
+
+# Archived zips are kept from previous_ug
+FROM ug_version_archiver AS ug_html_without_archived
+RUN rm -rf /usr/share/nginx/html/archived
+
+FROM previous_ug AS ug_pr
+ARG UG_HOME
+ARG UG_VERSION_TO_BUILD
+
+USER 0
+RUN find /usr/share/nginx/html -mindepth 1 -maxdepth 1 ! -name archived -exec rm -rf {} + && \
+    rm -rf "/usr/share/nginx/all/${UG_VERSION_TO_BUILD}"
+
+COPY --from=ug_builder --chown=nginx:nginx /tmp/nginx/ /etc/nginx/
+COPY --from=ug_html_without_archived --chown=nginx:nginx --chmod=644 /usr/share/nginx/html /usr/share/nginx/html
+COPY --from=ug_builder --chown=nginx:nginx --chmod=644 $UG_HOME/versions.json  /usr/share/nginx/html/versions.json
+COPY --from=ug_builder --chown=nginx:nginx --chmod=755 $UG_HOME/sphinx/build/html/ /usr/share/nginx/all/$UG_VERSION_TO_BUILD/
+COPY --chown=nginx:nginx --chmod=644 static/img/ /usr/share/nginx/html/static/img/
+
+USER 101
+
+EXPOSE 8080
+
+################################################################################
 # Create a minimal and unprivileged docker in order to make it compatible with
 # OpenShift beast practices out-of-the-box.
 # This step is required to periodically update the nginx base image
-FROM nginxinc/nginx-unprivileged:1.31.4-alpine-slim@sha256:d668aa123a6ec3216ba5ae6b398ae8001d5e81d3142d3659e20354fd0c3c3125
+FROM quay.io/nginx/nginx-unprivileged:1.31.9-alpine-slim@sha256:75e85a09b0f25bd46d49a9fd85589ffa70b0459c8ed5ee0dc6596fd642e1f829
 ARG UG_HOME
 ARG UG_VERSION_TO_BUILD
 
