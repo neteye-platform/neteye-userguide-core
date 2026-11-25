@@ -63,7 +63,6 @@
     const CREASE_R = 48;                      // the goalie's blue half-circle
     const RISKY_CHECK = 0.6;                  // body checks harder than this can draw a foul or a fight
     const SANTA = 0, HUMBUG = 1;
-    const TEAM_NAMES = ["Santa Clauses", "Humbugs"];
 
     const COLORS = {
         ice: "#f4f9ff",
