@@ -178,3 +178,25 @@ body.dark-theme #switch-theme #switch-dark-mode {
 cds-header-menu-item::part(link) {
     cursor: pointer;
 }
+
+/** Seasonal Christmas hockey easter egg **/
+#topbar #xmas-game.xmas-hidden {
+    display: none;
+}
+
+#topbar #xmas-game img {
+    animation: xmas-present-wiggle 4s ease-in-out infinite;
+}
+
+@keyframes xmas-present-wiggle {
+    0%, 86%, 100% { transform: rotate(0); }
+    89% { transform: rotate(-12deg); }
+    92% { transform: rotate(10deg); }
+    95% { transform: rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #topbar #xmas-game img {
+        animation: none;
+    }
+}
