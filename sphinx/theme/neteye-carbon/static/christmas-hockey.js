@@ -56,6 +56,7 @@
     const GOAL_LINE = 70;                     // distance of goal line from the end boards
     const NET_MOUTH = 86, NET_DEPTH = 28;
     const SKATER_R = 16, PUCK_R = 6;
+    const SWITCH_FX = 0.45;                   // seconds of the control-switch pop
     const GOALIE_REACH = 12;                  // pads and glove beyond the goalie body
     const GAME_SECONDS = 180;
     const PENALTY_SECONDS = 15, FIGHT_SECONDS = 2.6, BRAWL_SECONDS = 4.5;
@@ -161,6 +162,8 @@
         let score = [0, 0];
         let lastScorer = null;
         let controlled = null;
+        let lastControlled = null; // to notice when control moves to another Santa
+        let switchFx = 0;          // seconds left of the "you are now this Santa" pop
         let charging = false;
         let charge = 0;
         let chargeMode = "shot";   // shot (with the puck) | sprint (without it)
@@ -197,11 +200,19 @@
 
         skaters.push(...makeTeam(SANTA), ...makeTeam(HUMBUG));
 
+        // The skaters of a team that are on the ice (not in the box), centre first
+        function teamSkaters(team) {
+            return skaters.filter(m => m.team === team && !m.goalie).sort((a, b) => a.role - b.role);
+        }
+
+        // Spots are handed out by who is actually on the ice, not by role: with the centre in
+        // the penalty box the next skater takes the draw, so the dot is never left empty.
         function faceoffSpot(s) {
             const d = attackDir(s.team);
             if (s.goalie) return {x: goalX(s.team) + d * 18, y: H / 2};
-            if (s.role === 0) return {x: W / 2 - d * 24, y: H / 2};
-            return {x: W / 2 - d * 140, y: H / 2 + (s.role === 1 ? -120 : 120)};
+            const slot = teamSkaters(s.team).indexOf(s);       // 0 centre, 1 upper wing, 2 lower wing
+            if (slot <= 0) return {x: W / 2 - d * 24, y: H / 2};
+            return {x: W / 2 - d * 140, y: H / 2 + (slot === 1 ? -120 : 120)};
         }
 
         function resetPositions(snap) {
@@ -237,8 +248,7 @@
             charging = false;
             resetPositions(false);
             puck.x = -1000;            // puck is in the referee's paw until the drop
-            controlled = skaters.find(s => s.team === SANTA && s.role === 0) || null;
-            if (!controlled) pickControlled();     // the centre is in the penalty box
+            controlled = teamSkaters(SANTA)[0] || null;     // the Santa taking the draw
             say("Faceoff!", 1.4);
         }
 
@@ -290,7 +300,7 @@
             showScreen(
                 "Santa Clauses vs Humbugs",
                 "The Humbugs think Christmas is overrated &mdash; show them some holiday spirit on the ice! " +
-                "You control the Santa with the yellow ring. " +
+                "You control the Santa with the yellow triangle and ring. " +
                 "Without the puck, hold Space to sprint into a Humbug &mdash; but check too hard and you " +
                 "risk the penalty box or a brawl. And never, ever charge a goalie. " +
                 "Our head referee, the red panda, drops the puck. 3 minutes, sudden death if tied.",
@@ -558,6 +568,7 @@
             },
             shot: () => tone(180, 0.08, "square", 0.08, 60),
             pass: () => tone(320, 0.05, "triangle", 0.06, 200),
+            switch: () => tone(660, 0.07, "sine", 0.04, 990),
             board: () => tone(110, 0.1, "triangle", 0.06),
             sprint: () => tone(420, 0.14, "sine", 0.04, 900),
             hit: (p) => tone(95, 0.16, "square", 0.06 + p * 0.06, 45),
@@ -727,11 +738,13 @@
             if (s.team === SANTA && !s.goalie) {
                 controlled = s;
             } else if (s.team === HUMBUG && controlled) {
-                // Auto-switch to the Santa closest to the puck when defending
+                // Auto-switch to the Santa closest to the puck when defending, unless we are in
+                // the middle of charging a check: that one keeps its player
+                const chargingCheck = charging && chargeMode === "sprint" && controlled && !controlled.fightT;
                 const closest = skaters
                     .filter(m => m.team === SANTA && !m.goalie && !m.fightT)
                     .sort((a, b) => dist(a, s) - dist(b, s))[0];
-                if (closest) controlled = closest;
+                if (closest && !chargingCheck) controlled = closest;
             }
             // A shot charge needs our own puck; a sprint charge only ends when control switches
             if (chargeMode === "shot" ? (s.team !== SANTA || s !== controlled) : controlled !== before) {
@@ -1396,6 +1409,18 @@
             if (state === "paused" || state === "title" || state === "over") return;
 
             stateTimer += dt;
+
+            // Control moved to another Santa (Q, a pass, a defensive auto-switch, a penalty):
+            // pop the markers so the player notices. Faceoffs and goals return early below.
+            if (switchFx > 0) switchFx = Math.max(0, switchFx - dt);
+            if (controlled !== lastControlled) {
+                if (controlled) {
+                    switchFx = SWITCH_FX;
+                    if (lastControlled && state === "play") sfx.switch();
+                }
+                lastControlled = controlled;
+            }
+
             updateReferee(dt);
             updateChecks(dt);
 
@@ -2116,6 +2141,73 @@
             c.stroke();
         }
 
+        // The marker floats over the head, unless that would leave the canvas at the top boards
+        function markerFitsAbove(s) {
+            return s.y - 66 > -M;
+        }
+
+        // Ring around the skates of the controlled player: the back half goes under the body,
+        // the front half over it, so it reads as a ring on the ice. It pulses gently.
+        const RING_RX = 28, RING_RY = 12, RING_DY = 14;
+        function drawControlRing(c, s, front) {
+            const pulse = 0.85 + 0.15 * Math.sin(lastTime / 200);
+            c.save();
+            c.lineCap = "round";
+            if (!front) {
+                // translucent disc on the ice, under the player
+                c.fillStyle = "rgba(241, 194, 27, 0.35)";
+                c.beginPath();
+                c.ellipse(s.x, s.y + RING_DY, RING_RX, RING_RY, 0, 0, Math.PI * 2);
+                c.fill();
+            }
+            const a0 = front ? 0 : Math.PI, a1 = front ? Math.PI : Math.PI * 2;
+            c.globalAlpha = pulse;
+            for (const [color, width] of [["#161616", 7], ["#f1c21b", 4]]) {   // dark outline, then yellow
+                c.strokeStyle = color;
+                c.lineWidth = width;
+                c.beginPath();
+                c.ellipse(s.x, s.y + RING_DY, RING_RX, RING_RY, 0, a0, a1);
+                c.stroke();
+            }
+            c.restore();
+        }
+
+        // Control just moved to this Santa: a ring bursts out from the skates
+        function drawSwitchFx(c, s) {
+            const k = 1 - switchFx / SWITCH_FX;          // 0 -> 1 over the effect
+            c.save();
+            c.globalAlpha = 1 - k;
+            c.strokeStyle = "#f1c21b";
+            c.lineWidth = 4 * (1 - k) + 1;
+            c.beginPath();
+            c.ellipse(s.x, s.y + RING_DY, RING_RX + 44 * k, RING_RY + 18 * k, 0, 0, Math.PI * 2);
+            c.stroke();
+            c.restore();
+        }
+
+        // Controlled player marker: a bobbing triangle pointing at the player, drawn over
+        // everything on the ice so no other skater can hide it
+        function drawControlMarker(c, s, above) {
+            const bob = Math.sin(lastTime / 160) * 2;
+            const pop = 1 + 0.6 * (switchFx / SWITCH_FX); // starts big and settles
+            const dir = above ? -1 : 1;                       // away from the player
+            const tip = above ? s.y - 38 + bob : s.y + 32 - bob;
+            const base = tip + dir * 20 * pop;
+            c.save();
+            c.beginPath();
+            c.moveTo(s.x, tip);
+            c.lineTo(s.x - 13 * pop, base);
+            c.lineTo(s.x + 13 * pop, base);
+            c.closePath();
+            c.fillStyle = "#f1c21b";
+            c.fill();
+            c.strokeStyle = "#161616";
+            c.lineWidth = 3;
+            c.lineJoin = "round";
+            c.stroke();
+            c.restore();
+        }
+
         function draw() {
             const scale = canvas.width / (W + 2 * M);
             ctx.setTransform(scale, 0, 0, scale, M * scale, M * scale);
@@ -2124,24 +2216,19 @@
             drawNet(ctx, SANTA);
             drawNet(ctx, HUMBUG);
 
-            // Controlled player marker under the feet
-            if (controlled && state !== "title") {
-                ctx.strokeStyle = "#f1c21b";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.ellipse(controlled.x, controlled.y + 12, 18, 7, 0, 0, Math.PI * 2);
-                ctx.stroke();
-            }
+            const marked = state !== "title" ? controlled : null;
 
             // Players inside a fight are hidden by its dust cloud
             const sorted = skaters.filter(s => !(s.fightT > 0)).sort((a, b) => a.y - b.y);
             for (const s of sorted) drawShadow(ctx, s.x, s.y, SKATER_R);
+            if (marked) drawControlRing(ctx, marked, false);
             drawPuck(ctx);
             for (const s of sorted) {
                 if (s.boostT > 0) drawSpeedLines(ctx, s);
                 drawStick(ctx, s);
                 if (s.team === SANTA) drawSanta(ctx, s);
                 else drawHumbug(ctx, s);
+                if (s === marked) drawControlRing(ctx, s, true);
                 if (s.stunT > 0) drawDizzy(ctx, s);
             }
             if (puck.owner) drawPuck(ctx);
@@ -2150,9 +2237,14 @@
             drawReferee(ctx);
             drawPenaltyBox(ctx);
 
-            // Charge bar; a sprint turns red where a check gets risky
+            const markerAbove = controlled && markerFitsAbove(controlled);
+            if (marked && switchFx > 0) drawSwitchFx(ctx, marked);
+            if (marked) drawControlMarker(ctx, marked, markerAbove);
+
+            // Charge bar on the side of the player away from the marker; a sprint turns red
+            // where a check gets risky
             if (charging && controlled) {
-                const bx = controlled.x - 20, by = controlled.y - 40;
+                const bx = controlled.x - 20, by = markerAbove ? controlled.y + 36 : controlled.y - 44;
                 ctx.fillStyle = "rgba(22, 22, 22, 0.6)";
                 ctx.fillRect(bx, by, 40, 6);
                 const hot = chargeMode === "sprint" ? charge > RISKY_CHECK : charge > 0.85;
