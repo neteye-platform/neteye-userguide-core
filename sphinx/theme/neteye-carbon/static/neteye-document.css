@@ -616,6 +616,9 @@ button.copybtn {
     background-image: url(./icons/copy-black.svg);
     outline: unset;
 }
+body.dark-theme .highlight button.copybtn {
+    background-image: url(./icons/copy-white.svg);
+}
 .highlight button.copybtn:hover {
     /* when viewing the UG, there is a `copybutton.css?..` file in _static which tries to overwrite these values.*/
     /*!important is thus required, as I'm not sure where this problem comes from*/
