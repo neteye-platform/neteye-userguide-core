@@ -91,6 +91,8 @@ tg_linux = (
 rst_prolog = f"""
 .. |chevron| image:: /icons/chevron.ico
    :width: 12px
+.. |menu| image:: /icons/menu.ico
+   :width: 12px
 .. |reload| image:: /icons/reload.ico
    :width: 12px
 .. |edit| image:: /icons/edit.ico
@@ -121,6 +123,7 @@ rst_prolog = f"""
 .. |neteye_previous_version_bold| replace:: **{neteye_previous_version}**
 .. |neteye_following_version| replace:: {neteye_following_version}
 .. |neteye_following_version_bold| replace:: **{neteye_following_version}**
+.. |sat| replace:: SATAYO
 .. |satellite_config_file| replace:: :file:`/root/satellite-setup/config/{neteye_version}/satellite-config.tar.gz`
 .. |support| replace:: support portal
 .. _support: https://servicedesk.wuerth-it.it/
