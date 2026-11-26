@@ -69,6 +69,12 @@
         {% endif %}
     </cds-header-nav>
     <div class="cds--header__global">
+        <!-- Seasonal easter egg: shown only around Christmas by christmas-hockey.js -->
+        <cds-header-global-action id="xmas-game" class="header-global-action xmas-hidden"
+                                  aria-label="Play Christmas hockey"
+                                  tooltip-text="Christmas hockey!">
+            <img slot="icon" src="{{ pathto('_static/icons/present.svg', 1)|e }}"/>
+        </cds-header-global-action>
         <!-- This header menu is filled js side -->
         <cds-header-menu id="change-version"
                          class="header-menu"
@@ -88,3 +94,4 @@
 </cds-header>
 
 <script src="{{pathto('_static/topbar.js', 1)|e}}" async></script>
+<script src="{{pathto('_static/christmas-hockey.js', 1)|e}}" defer></script>
