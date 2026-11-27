@@ -192,12 +192,15 @@ manpages_url = "https://manpages.debian.org/{path}"
 
 copybutton_prompt_is_regexp = True
 
-# No copy button on ".. code-block:: none" blocks.
-copybutton_selector = "div:not(.highlight-none) > div.highlight > pre"
+# No copy button on ".. code-block:: none" blocks or blocks with
+# ":class: no-copybutton".
+copybutton_selector = (
+    "div:not(.highlight-none):not(.no-copybutton) > div.highlight > pre"
+)
 
-# Leave out highlighted prompts (e.g. in neteye-console blocks). Then no line
-# matches copybutton_prompt_text, so all remaining lines are copied.
-copybutton_exclude = ".linenos, .gp"
+# Leave out the prompts of neteye-console blocks (see NetEyeConsoleLexer). Then
+# no line matches copybutton_prompt_text, so all remaining lines are copied.
+copybutton_exclude = ".linenos, .gp-NetEye"
 
 # Prompts (see source/command-prompts.csv).
 # Must not contain capturing groups: the copy button uses groups 1 and 2 to
@@ -205,7 +208,7 @@ copybutton_exclude = ".linenos, .gp"
 # https://github.com/executablebooks/sphinx-copybutton/issues/96.
 copybutton_prompt_text = (
     r"(?:(?:neteye|sat|cluster(?:-active|-node[^#\s]*)?"
-    r"|voting-only|elastic-only|influxdb-only)?#|C:\\[^>]*>)\s"
+    r"|voting-only|elastic-only|influxdb-only)?#|C:\\[^>]*>\s*)\s"
 )
 
 #####
@@ -797,13 +800,13 @@ def get_toc_data(app, pagename, templatename, context, doctree):
 class NetEyeConsoleLexer(BashLexer):
     """Bash, with a leading ``<word>#`` prompt (e.g. ``cluster#``) highlighted.
 
-    The prompt is a ``.gp`` token, which the copy button leaves out.
+    The prompt is a ``.gp.gp-NetEye`` token, which the copy button leaves out.
     """
 
     name = "NetEye Console"
     aliases = ("neteye-console",)
     filenames = mimetypes = ()
-    tokens = {"root": [(r"^[^\s#]*#[ \t]+", Generic.Prompt), inherit]}  # noqa: RUF012
+    tokens = {"root": [(r"^[^\s#]*#[ \t]+", Generic.Prompt.NetEye), inherit]}  # noqa: RUF012
 
 
 def setup(app):
