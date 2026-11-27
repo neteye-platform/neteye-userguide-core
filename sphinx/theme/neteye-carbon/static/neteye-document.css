@@ -421,7 +421,7 @@ cds-modal-close-button::part(button) {
 .admonition.note {
     border-color: var(--primary-color-light);
 }
-p.rubric + .admonition {
+.admonition.rubric-following-note {
     margin-left: var(--cds-spacing-05);
 }
 /* hints */
