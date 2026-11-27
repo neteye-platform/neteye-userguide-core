@@ -38,22 +38,6 @@ Finally, access with a browser to `<neteye_IP>:8001`. This can be
 useful even when writing new documentation and check if everything
 compiles without warnings or errors.
 
-Highlighting shell prompts
-==========================
-
-Use ``neteye-console`` for shell commands with NetEye prompts::
-
-  .. code:: neteye-console
-
-     cluster# neteye status
-     cluster-node-N(standby)# echo "Ready"
-
-The block is highlighted as bash. At the start of a line, any text without
-spaces up to the first ``#``, followed by a space (e.g. ``#``,
-``cluster#``), is a prompt: it is shown in a different color and the copy
-button leaves it out. All other lines are copied unchanged. Existing
-``bash`` and ``console`` blocks are unchanged.
-
 Useful links
 ============
 
