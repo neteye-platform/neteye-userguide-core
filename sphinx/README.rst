@@ -38,7 +38,6 @@ Finally, access with a browser to `<neteye_IP>:8001`. This can be
 useful even when writing new documentation and check if everything
 compiles without warnings or errors.
 
-
 Useful links
 ============
 

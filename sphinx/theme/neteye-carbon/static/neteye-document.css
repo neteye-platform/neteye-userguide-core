@@ -586,6 +586,10 @@ body.dark-theme .highlight .gp { color: var(--codeblock-dark-handle); }
 }
 body.dark-theme .highlight pre { color: var(--codeblock-dark-content); }
 
+.highlight-neteye-console .highlight .nb {
+    color: inherit;
+}
+
 .highlight .c1 { color: var(--codeblock-light-content); }
 .body .highlight pre .n { color: var(--codeblock-light-handle); }
 .body .highlight pre .m { color: var(--codeblock-light-content); }

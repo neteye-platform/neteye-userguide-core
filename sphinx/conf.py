@@ -19,6 +19,9 @@ from copy import deepcopy
 from pathlib import Path
 
 from docutils import nodes
+from pygments.lexer import inherit
+from pygments.lexers.shell import BashLexer
+from pygments.token import Generic
 from sphinx.environment.adapters.toctree import TocTree
 
 from sphinx import addnodes
@@ -189,16 +192,23 @@ manpages_url = "https://manpages.debian.org/{path}"
 
 copybutton_prompt_is_regexp = True
 
-# RegExp to match prompts used in code snippet
+# No copy button on ".. code-block:: none" blocks or blocks with
+# ":class: no-copybutton".
+copybutton_selector = (
+    "div:not(.highlight-none):not(.no-copybutton) > div.highlight > pre"
+)
 
-# IMPORTANT: we can not use round parenthesis `(` `)` in the regexp
-# due to a possible bug in (or wrong implementation of)
-# sphinx_copybutton extension. See discussion at
+# Leave out the prompts of neteye-console blocks (see NetEyeConsoleLexer). Then
+# no line matches copybutton_prompt_text, so all remaining lines are copied.
+copybutton_exclude = ".linenos, .gp-NetEye"
+
+# Prompts (see source/command-prompts.csv).
+# Must not contain capturing groups: the copy button uses groups 1 and 2 to
+# separate the prompt and command. See
 # https://github.com/executablebooks/sphinx-copybutton/issues/96.
-
 copybutton_prompt_text = (
-    r"neteye#\s|sat#\s|cluster#\s|cluster-node.+#\s|"
-    + r"elastic-only#\s|voting-only#\s|#\s|C:\\[^>]*>\s"
+    r"(?:(?:neteye|sat|cluster(?:-active|-node[^#\s]*)?"
+    r"|voting-only|elastic-only|influxdb-only)?#|C:\\[^>]*>\s*)\s"
 )
 
 #####
@@ -787,5 +797,18 @@ def get_toc_data(app, pagename, templatename, context, doctree):
     context["icons"] = json_data
 
 
+class NetEyeConsoleLexer(BashLexer):
+    """Bash, with a leading ``<word>#`` prompt (e.g. ``cluster#``) highlighted.
+
+    The prompt is a ``.gp.gp-NetEye`` token, which the copy button leaves out.
+    """
+
+    name = "NetEye Console"
+    aliases = ("neteye-console",)
+    filenames = mimetypes = ()
+    tokens = {"root": [(r"^[^\s#]*#[ \t]+", Generic.Prompt.NetEye), inherit]}  # noqa: RUF012
+
+
 def setup(app):
+    app.add_lexer("neteye-console", NetEyeConsoleLexer)
     app.connect("html-page-context", get_toc_data)
